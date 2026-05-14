@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Проекты — Assem Danakhmet</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ── Gallery page ── */
+    .gallery-hero {
+      background: var(--violet);
+      color: var(--air);
+      padding: 140px 48px 72px;
+    }
+
+    .gallery-hero a.back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      opacity: .7;
+      transition: opacity .2s;
+      margin-bottom: 32px;
+    }
+    .gallery-hero a.back:hover { opacity: 1; }
+
+    .gallery-hero h1 {
+      font-size: 88px;
+      line-height: 1;
+      letter-spacing: -4px;
+      margin: 0;
+    }
+
+    .gallery-section {
+      padding: 80px 48px;
+      background: var(--air);
+    }
+
+    .gallery-section:nth-child(even) { background: var(--white); }
+
+    .gallery-section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 20px;
+      margin-bottom: 36px;
+    }
+
+    .gallery-section-header h2 {
+      font-size: 52px;
+      font-weight: 900;
+      letter-spacing: -2px;
+      margin: 0;
+      color: var(--black);
+    }
+
+    .gallery-section-header span {
+      font-size: 18px;
+      font-weight: 600;
+      color: #888;
+    }
+
+    /* 3-column masonry */
+    .gallery-grid {
+      columns: 3;
+      column-gap: 6px;
+    }
+
+    .gallery-grid img {
+      width: 100%;
+      display: block;
+      margin-bottom: 6px;
+      break-inside: avoid;
+      cursor: zoom-in;
+      transition: opacity .2s;
+    }
+    .gallery-grid img:hover { opacity: .88; }
+
+    /* ── Lightbox ── */
+    .lb {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(0,0,0,.92);
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+    .lb.open { display: flex; }
+
+    .lb-img {
+      max-width: 92vw;
+      max-height: 90svh;
+      object-fit: contain;
+      display: block;
+      border-radius: 2px;
+      user-select: none;
+    }
+
+    .lb-close {
+      position: absolute;
+      top: 20px; right: 24px;
+      background: none; border: none;
+      color: #fff; font-size: 36px;
+      cursor: pointer; opacity: .7;
+      line-height: 1; padding: 8px;
+      transition: opacity .2s;
+    }
+    .lb-close:hover { opacity: 1; }
+
+    .lb-prev, .lb-next {
+      position: absolute;
+      top: 50%; transform: translateY(-50%);
+      background: rgba(255,255,255,.1);
+      border: none; color: #fff;
+      font-size: 28px; cursor: pointer;
+      padding: 20px 18px;
+      opacity: .7; transition: opacity .2s, background .2s;
+      line-height: 1;
+    }
+    .lb-prev { left: 0; border-radius: 0 4px 4px 0; }
+    .lb-next { right: 0; border-radius: 4px 0 0 4px; }
+    .lb-prev:hover, .lb-next:hover { opacity: 1; background: rgba(255,255,255,.2); }
+
+    .lb-counter {
+      position: absolute;
+      bottom: 20px; left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,.5);
+      font-size: 14px; font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    @media (max-width: 600px) {
+      .lb-prev, .lb-next { padding: 16px 12px; font-size: 22px; }
+      .lb-img { max-width: 100vw; max-height: 88svh; }
+    }
+
+    @media (max-width: 900px) {
+      .gallery-hero { padding: 110px 20px 48px; }
+      .gallery-hero h1 { font-size: 52px; letter-spacing: -2px; }
+      .gallery-section { padding: 48px 20px; }
+      .gallery-section-header h2 { font-size: 34px; }
+      .gallery-section-header span { font-size: 15px; }
+      .gallery-grid { columns: 2; column-gap: 5px; }
+      .gallery-grid img { margin-bottom: 5px; }
+    }
+
+    @media (max-width: 480px) {
+      .gallery-hero h1 { font-size: 40px; }
+      .gallery-grid { columns: 2; column-gap: 4px; }
+      .gallery-grid img { margin-bottom: 4px; }
+    }
+
+    @media (max-width: 320px) {
+      .gallery-grid { columns: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav" id="nav">
+    <a class="logo" href="index.html">Assem Danakhmet</a>
+    <div class="nav-links">
+      <a href="index.html#about">Обо мне</a>
+      <a href="index.html#portfolio">Портфолио</a>
+      <a href="index.html#work">Как я работаю</a>
+      <a href="index.html#services">Услуги</a>
+    </div>
+    <a class="nav-btn" href="index.html#contact">Обсудить проект</a>
+    <button class="nav-hamburger" aria-label="Открыть меню">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- MOBILE DRAWER -->
+  <div class="nav-drawer" id="nav-drawer">
+    <button class="nav-drawer-close" aria-label="Закрыть меню">✕</button>
+    <a href="index.html#about">Обо мне</a>
+    <a href="index.html#portfolio">Портфолио</a>
+    <a href="index.html#work">Как я работаю</a>
+    <a href="index.html#services">Услуги</a>
+    <a href="index.html#contact" class="drawer-cta">Обсудить проект</a>
+  </div>
+
+  <!-- HERO -->
+  <div class="gallery-hero">
+    <a class="back" href="index.html">← Назад</a>
+    <h1>Все проекты</h1>
+  </div>
+
+  <!-- PROJECT: Éclat -->
+  <section class="gallery-section" id="eclat">
+    <div class="gallery-section-header">
+      <h2>Éclat</h2>
+    </div>
+    <div class="gallery-grid">
+        <img src="projects/eclat/02.jpg" alt="Éclat — кухня">
+
+        <img src="projects/eclat/05.jpg" alt="Éclat — спальня">
+
+        <img src="projects/eclat/01.jpg" alt="Éclat — кухня детали">
+
+        <img src="projects/eclat/03.jpg" alt="Éclat — арка">
+
+        <img src="projects/eclat/04.jpg" alt="Éclat — детская">
+
+        <img src="projects/eclat/06.jpg" alt="Éclat — гостиная">
+
+        <img src="projects/eclat/07.jpg" alt="Éclat — столовая">
+
+        <img src="projects/eclat/08.jpg" alt="Éclat — столовая 2">
+
+        <img src="projects/eclat/09.jpg" alt="Éclat — детали">
+
+    </div>
+  </section>
+
+  <!-- PROJECT: Amore -->
+  <section class="gallery-section" id="amore">
+    <div class="gallery-section-header">
+      <h2>Amore</h2>
+    </div>
+    <div class="gallery-grid">
+        <img src="projects/amore/05.png" alt="Amore — гостиная с синими дверями">
+
+        <img src="projects/amore/01.png" alt="Amore — прихожая">
+
+        <img src="projects/amore/03.png" alt="Amore — гостиная арки">
+
+        <img src="projects/amore/04.png" alt="Amore — гостиная диван">
+
+        <img src="projects/amore/06.png" alt="Amore — диван синие двери">
+
+        <img src="projects/amore/02.png" alt="Amore — гостиная рояль">
+
+    </div>
+  </section>
+
+  <!-- PROJECT: Olive -->
+  <section class="gallery-section" id="olive">
+    <div class="gallery-section-header">
+      <h2>Olive</h2>
+    </div>
+    <div class="gallery-grid">
+        <img src="projects/olive/01.jpg" alt="Olive — спальня">
+
+        <img src="projects/olive/04.jpg" alt="Olive — санузел">
+
+        <img src="projects/olive/02.jpg" alt="Olive — прихожая">
+
+        <img src="projects/olive/03.jpg" alt="Olive — прихожая 2">
+
+        <img src="projects/olive/05.jpg" alt="Olive — санузел 2">
+
+        <img src="projects/olive/06.jpg" alt="Olive — гостевая">
+
+        <img src="projects/olive/07.jpg" alt="Olive — гостевая 2">
+
+        <img src="projects/olive/08.jpg" alt="Olive — гостевая 3">
+
+    </div>
+  </section>
+
+  <!-- PROJECT: Medvedevo -->
+  <section class="gallery-section" id="medvedevo">
+    <div class="gallery-section-header">
+      <h2>Medvedevo</h2>
+    </div>
+    <div class="gallery-grid">
+        <img src="projects/medvedevo/01.jpg" alt="Medvedevo — спальня">
+
+        <img src="projects/medvedevo/04.jpg" alt="Medvedevo — мастер ванная">
+
+        <img src="projects/medvedevo/02.jpg" alt="Medvedevo — спальня 2">
+
+        <img src="projects/medvedevo/06.jpg" alt="Medvedevo — гостевая ванная">
+
+        <img src="projects/medvedevo/03.jpg" alt="Medvedevo — спальня 3">
+
+        <img src="projects/medvedevo/05.jpg" alt="Medvedevo — ванная 2">
+
+        <img src="projects/medvedevo/07.jpg" alt="Medvedevo — гардероб">
+
+        <img src="projects/medvedevo/08.jpg" alt="Medvedevo — гардероб 2">
+
+        <img src="projects/medvedevo/09.jpg" alt="Medvedevo — прачка">
+
+        <img src="projects/medvedevo/10.jpg" alt="Medvedevo — прачка 2">
+
+        <img src="projects/medvedevo/11.jpg" alt="Medvedevo — прачка 3">
+
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <footer id="contact" style="padding-bottom: 80px;">
+    <div class="footer-grid">
+      <div class="footer-text">
+        <h2>Давайте обсудим<br>ваш проект</h2>
+        <p>Напишите пару слов об объекте: город, площадь, стадия ремонта и что хотите получить.</p>
+        <a class="footer-cta" href="https://wa.me/77077770042" target="_blank" rel="noopener">Оставить заявку</a>
+        <div class="socials">
+          <a href="https://www.instagram.com/assem_danakhmet?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener">Instagram →</a>
+          <a href="https://t.me/assem_d" target="_blank" rel="noopener">Telegram →</a>
+        </div>
+      </div>
+    </div>
+    <div class="huge-logo">ASSEM</div>
+  </footer>
+
+  <!-- LIGHTBOX -->
+  <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Просмотр фото">
+    <button class="lb-close" id="lb-close" aria-label="Закрыть">✕</button>
+    <button class="lb-prev"  id="lb-prev"  aria-label="Предыдущее">‹</button>
+    <img class="lb-img" id="lb-img" src="" alt="">
+    <button class="lb-next"  id="lb-next"  aria-label="Следующее">›</button>
+    <div class="lb-counter" id="lb-counter"></div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    (() => {
+      const lb      = document.getElementById('lb');
+      const lbImg   = document.getElementById('lb-img');
+      const lbClose = document.getElementById('lb-close');
+      const lbPrev  = document.getElementById('lb-prev');
+      const lbNext  = document.getElementById('lb-next');
+      const lbCount = document.getElementById('lb-counter');
+
+      // Collect all gallery images in order
+      const imgs = [...document.querySelectorAll('.gallery-grid img')];
+      let current = 0;
+
+      function show(index) {
+        current = (index + imgs.length) % imgs.length;
+        lbImg.src = imgs[current].src;
+        lbImg.alt = imgs[current].alt;
+        lbCount.textContent = `${current + 1} / ${imgs.length}`;
+        lb.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function close() {
+        lb.classList.remove('open');
+        document.body.style.overflow = '';
+        lbImg.src = '';
+      }
+
+      imgs.forEach((img, i) => img.addEventListener('click', () => show(i)));
+
+      lbClose.addEventListener('click', close);
+      lbPrev.addEventListener('click', () => show(current - 1));
+      lbNext.addEventListener('click', () => show(current + 1));
+
+      // Close on backdrop click
+      lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
+
+      // Keyboard navigation
+      document.addEventListener('keydown', (e) => {
+        if (!lb.classList.contains('open')) return;
+        if (e.key === 'Escape')     close();
+        if (e.key === 'ArrowLeft')  show(current - 1);
+        if (e.key === 'ArrowRight') show(current + 1);
+      });
+
+      // Touch swipe support
+      let touchX = 0;
+      lb.addEventListener('touchstart', (e) => { touchX = e.touches[0].clientX; }, { passive: true });
+      lb.addEventListener('touchend',   (e) => {
+        const dx = e.changedTouches[0].clientX - touchX;
+        if (Math.abs(dx) > 50) dx < 0 ? show(current + 1) : show(current - 1);
+      });
+    })();
+  </script>
+</body>
+</html>

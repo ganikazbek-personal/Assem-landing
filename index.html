@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assem Danakhmet — Дизайн интерьеров</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav" id="nav">
+    <a class="logo" href="#home">Assem Danakhmet</a>
+    <div class="nav-links">
+      <a href="#about">Обо мне</a>
+      <a href="#portfolio">Портфолио</a>
+      <a href="#work">Как я работаю</a>
+      <a href="#services">Услуги</a>
+    </div>
+    <a class="nav-btn" href="#contact">Обсудить проект</a>
+    <button class="nav-hamburger" aria-label="Открыть меню">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- MOBILE DRAWER -->
+  <div class="nav-drawer" id="nav-drawer">
+    <button class="nav-drawer-close" aria-label="Закрыть меню">✕</button>
+    <a href="#about">Обо мне</a>
+    <a href="#portfolio">Портфолио</a>
+    <a href="#work">Как я работаю</a>
+    <a href="#services">Услуги</a>
+    <a href="#contact" class="drawer-cta">Обсудить проект</a>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <svg class="hero-waves" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" shape-rendering="geometricPrecision">
+      <defs>
+        <filter id="wf" x="-80%" y="-80%" width="260%" height="260%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.0038" numOctaves="2" seed="9" result="t">
+            <animate attributeName="baseFrequency"
+              values="0.0032;0.0045;0.0038;0.0032"
+              dur="22s" repeatCount="indefinite"/>
+          </feTurbulence>
+          <feDisplacementMap in="SourceGraphic" in2="t" scale="310" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
+          <feGaussianBlur in="displaced" stdDeviation="1.2"/>
+        </filter>
+      </defs>
+      <g filter="url(#wf)" stroke="white" stroke-width="18" stroke-linecap="round" fill="none" opacity="0.18">
+        <line x1="-60%" y1="8%"  x2="160%" y2="8%"/>
+        <line x1="-60%" y1="18%" x2="160%" y2="18%"/>
+        <line x1="-60%" y1="28%" x2="160%" y2="28%"/>
+        <line x1="-60%" y1="38%" x2="160%" y2="38%"/>
+        <line x1="-60%" y1="48%" x2="160%" y2="48%"/>
+        <line x1="-60%" y1="58%" x2="160%" y2="58%"/>
+        <line x1="-60%" y1="68%" x2="160%" y2="68%"/>
+        <line x1="-60%" y1="78%" x2="160%" y2="78%"/>
+        <line x1="-60%" y1="88%" x2="160%" y2="88%"/>
+        <line x1="-60%" y1="98%" x2="160%" y2="98%"/>
+      </g>
+    </svg>
+    <div class="hero-content">
+      <img class="hero-character" src="character.png" alt="" aria-hidden="true">
+      <h1>
+        <span class="h1-line">Создаю
+          <span class="tool-rotator" aria-label="Инструменты дизайна">
+            <!-- Щётка / Flat brush -->
+            <svg viewBox="0 0 100 100">
+              <path d="M18 58 L18 40 L22 28 L30 38 L38 28 L46 38 L54 28 L62 38 L68 28 L72 40 L72 58 Z"/>
+              <line x1="18" y1="50" x2="72" y2="50"/>
+              <line x1="30" y1="50" x2="30" y2="58"/>
+              <line x1="40" y1="50" x2="40" y2="58"/>
+              <line x1="50" y1="50" x2="50" y2="58"/>
+              <line x1="60" y1="50" x2="60" y2="58"/>
+              <path d="M36 58 L32 76 Q30 84 38 86 Q46 88 48 80 L52 58"/>
+            </svg>
+            <!-- Молоток / Hammer -->
+            <svg viewBox="0 0 100 100">
+              <path d="M42 44 L42 84 Q42 90 50 90 Q58 90 58 84 L58 44"/>
+              <path d="M28 18 L72 18 Q78 18 78 26 L78 44 L22 44 L22 26 Q22 18 28 18 Z"/>
+              <path d="M58 26 L72 26 Q78 26 78 32 L78 44 L58 44"/>
+            </svg>
+            <!-- Кресло / Armchair -->
+            <svg viewBox="0 0 100 100">
+              <path d="M26 54 Q26 18 50 16 Q74 18 74 54"/>
+              <path d="M10 72 Q8 50 16 44 Q22 40 26 46 L26 72"/>
+              <path d="M90 72 Q92 50 84 44 Q78 40 74 46 L74 72"/>
+              <path d="M10 72 Q12 82 22 84 L78 84 Q88 82 90 72"/>
+              <path d="M26 68 Q28 58 50 56 Q72 58 74 68"/>
+              <line x1="24" y1="84" x2="22" y2="94"/>
+              <line x1="76" y1="84" x2="78" y2="94"/>
+            </svg>
+            <!-- Рамка / Photo frame -->
+            <svg viewBox="0 0 100 100">
+              <path d="M38 16 L82 16 Q86 16 86 20 L86 84 Q86 88 82 88 L18 88 Q14 88 14 84 L14 36"/>
+              <line x1="14" y1="28" x2="14" y2="16"/>
+              <line x1="22" y1="16" x2="30" y2="16"/>
+              <circle cx="36" cy="44" r="10"/>
+              <path d="M16 78 L34 56 L52 72 L62 62 L84 82"/>
+            </svg>
+            <!-- Палетка / Paint palette -->
+            <svg viewBox="0 0 100 100">
+              <path d="M50 10 Q82 10 90 38 Q96 64 74 78 Q58 88 40 82 Q20 74 14 52 Q8 28 28 16 Q38 10 50 10 Z"/>
+              <circle cx="40" cy="27" r="11"/>
+              <circle cx="24" cy="56" r="7"/>
+              <circle cx="40" cy="72" r="7"/>
+              <circle cx="62" cy="76" r="7"/>
+              <circle cx="78" cy="60" r="7"/>
+              <line x1="64" y1="28" x2="86" y2="8"/>
+              <path d="M57 38 L64 28 L72 34 L63 46 Z"/>
+            </svg>
+            <!-- Шкаф / Wardrobe -->
+            <svg viewBox="0 0 100 100">
+              <rect x="12" y="10" width="76" height="82" rx="3"/>
+              <line x1="12" y1="26" x2="88" y2="26"/>
+              <line x1="50" y1="26" x2="50" y2="92"/>
+              <path d="M32 52 Q32 58 38 58 Q44 58 44 52"/>
+              <path d="M56 52 Q56 58 62 58 Q68 58 68 52"/>
+              <line x1="22" y1="92" x2="20" y2="100"/>
+              <line x1="78" y1="92" x2="80" y2="100"/>
+            </svg>
+          </span>
+        </span>
+        <span class="h1-line">яркие</span>
+        <span class="h1-line">пространства</span>
+      </h1>
+      <p class="hero-sub">Интерьеры, в которых хочется жить</p>
+      <a class="main-btn" href="#contact">Хочу обсудить проект</a>
+    </div>
+  </section>
+
+  <!-- TICKER 1 -->
+  <div class="ticker">
+    <div class="ticker-track">
+      <span>От идеи до реализации, с контролем каждого решения.</span>
+      <i class="mark"></i>
+      <span>От идеи до реализации, с контролем каждого решения.</span>
+      <i class="mark"></i>
+      <span>От идеи до реализации, с контролем каждого решения.</span>
+      <i class="mark"></i>
+      <span>От идеи до реализации, с контролем каждого решения.</span>
+      <i class="mark"></i>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <section class="about reveal" id="about">
+    <div>
+      <h2>Я создаю интерьеры,<br>в которые <span class="tag">влюбляются</span></h2>
+      <p>Люблю интерьеры, в которых есть жизнь. Я предлагаю смелые решения, арки, фактуры, цветовые акценты и интерьеры с характером. Но даже самый яркий проект должен быть удобным, логичным и реализуемым.</p>
+    </div>
+    <div class="about-photo-wrap">
+      <div class="photo-fragments">
+        <div class="photo-frag frag-1"></div>
+        <div class="photo-frag frag-2"></div>
+        <div class="photo-frag frag-3"></div>
+      </div>
+      <div class="photo-nameplate">
+        <div class="photo-nameplate-name">Assem</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MISSION -->
+  <section class="mission reveal">
+    <h2><span>Моя задача</span> - сделать интерьер, который выглядит ярко, ощущается дорого и подходит под вашу реальную жизнь</h2>
+  </section>
+
+  <!-- PORTFOLIO -->
+  <section class="portfolio reveal" id="portfolio">
+    <div class="portfolio-top">
+      <h2>проекты, которые не хочется пролистывать</h2>
+    </div>
+
+
+<div class="project-archive">
+      <a class="archive-card" href="gallery.html#eclat">
+        <img src="projects/eclat/01.jpg" alt="Éclat" loading="lazy">
+        <div>
+          <b>Éclat</b>
+          <span>Астана</span>
+        </div>
+      </a>
+      <a class="archive-card" href="gallery.html#amore">
+        <img src="projects/amore/05.png" alt="Amore" loading="lazy">
+        <div>
+          <b>Amore</b>
+          <span>Астана</span>
+        </div>
+      </a>
+      <a class="archive-card" href="gallery.html#olive">
+        <img src="projects/olive/01.jpg" alt="Olive" loading="lazy">
+        <div>
+          <b>Olive</b>
+          <span>Астана</span>
+        </div>
+      </a>
+      <a class="archive-card" href="gallery.html#medvedevo">
+        <img src="projects/medvedevo/01.jpg" alt="Medvedevo" loading="lazy">
+        <div>
+          <b>Medvedevo</b>
+          <span>Москва</span>
+        </div>
+      </a>
+    </div>
+
+    <div class="portfolio-actions">
+      <a class="portfolio-btn" href="gallery.html">Смотреть все проекты</a>
+      <a class="portfolio-btn secondary" href="#contact">Обсудить похожий проект</a>
+    </div>
+  </section>
+
+  <!-- HOW I WORK -->
+  <section class="work reveal" id="work">
+    <h2 class="section-title">Как я работаю</h2>
+    <div class="work-grid">
+      <article class="work-card dark">
+        <h3>Знакомство</h3>
+        <p>Обсуждаем объект, ваш образ жизни, бюджет, сроки, стиль и ожидания от проекта.</p>
+        <div class="number">1</div>
+      </article>
+      <article class="work-card light">
+        <h3>Планировка</h3>
+        <p>Собираем удобную логику пространства. Красота начинается не с декора, а с правильного плана.</p>
+        <div class="number">2</div>
+      </article>
+      <article class="work-card dark">
+        <h3>Концепция</h3>
+        <p>Формируем настроение: цвет, материалы, формы, свет, мебель и главные визуальные акценты.</p>
+        <div class="number">3</div>
+      </article>
+      <article class="work-card light">
+        <h3>Рабочий проект</h3>
+        <p>Готовим чертежи для строителей, чтобы идея не умерла на объекте от фразы «а давайте проще».</p>
+        <div class="number">4</div>
+      </article>
+      <article class="work-card dark">
+        <h3>Реализация</h3>
+        <p>Сопровождаем процесс, отвечаем на вопросы, проверяем решения и держим проект в рамках концепции.</p>
+        <div class="number">5</div>
+      </article>
+    </div>
+  </section>
+
+  <!-- TICKER 2 -->
+  <div class="ticker">
+    <div class="ticker-track">
+      <span>Чем понятнее процесс, тем спокойнее стройка</span>
+      <i class="mark"></i>
+      <span>Чем понятнее процесс, тем спокойнее стройка</span>
+      <i class="mark"></i>
+      <span>Чем понятнее процесс, тем спокойнее стройка</span>
+      <i class="mark"></i>
+      <span>Чем понятнее процесс, тем спокойнее стройка</span>
+      <i class="mark"></i>
+    </div>
+  </div>
+
+  <!-- SERVICES -->
+  <section class="services reveal" id="services">
+    <div class="small">Услуги</div>
+    <div class="big">можно взять отдельный этап или полный проект</div>
+
+    <div class="service-grid">
+      <article class="service-card purple">
+        <div class="icon">☰</div>
+        <div>
+          <div class="brand">Формат услуги</div>
+          <div class="pill">Планировка</div>
+        </div>
+        <div>
+          <h3>Планировочное решение</h3>
+          <p>Разбираем объект и находим лучшую логику: зоны, проходы, хранение, мебель, сценарии жизни.</p>
+        </div>
+      </article>
+
+      <article class="service-card lavender">
+        <div class="icon">◈</div>
+        <div>
+          <div class="brand">Формат услуги</div>
+          <div class="pill">3D</div>
+        </div>
+        <div>
+          <h3>3D-визуализация</h3>
+          <p>Показываю будущий интерьер до ремонта: цвет, свет, мебель, материалы и настроение пространства без гадания на плитке.</p>
+        </div>
+      </article>
+
+      <article class="service-card light">
+        <div class="icon">⌗</div>
+        <div>
+          <div class="brand">Формат услуги</div>
+          <div class="pill">Проект</div>
+        </div>
+        <div>
+          <h3>Рабочий проект</h3>
+          <p>Чертежи, планы, развёртки и техническая база для строителей. То, без чего стройка начинает импровизировать.</p>
+        </div>
+      </article>
+
+      <article class="service-card lavender">
+        <div class="icon">◎</div>
+        <div>
+          <div class="brand">Формат услуги</div>
+          <div class="pill">Надзор</div>
+        </div>
+        <div>
+          <h3>Авторское сопровождение</h3>
+          <p>Выезды, ответы подрядчикам, проверка решений, корректировки и защита идеи проекта во время реализации.</p>
+        </div>
+      </article>
+
+      <article class="service-card pink">
+        <div class="icon">◉</div>
+        <div>
+          <div class="brand">Формат услуги</div>
+          <div class="pill">Комплектация</div>
+        </div>
+        <div>
+          <h3>Подбор материалов и мебели</h3>
+          <p>Помогаю собрать плитку, свет, мебель, сантехнику, декор и другие позиции в единую картину.</p>
+        </div>
+      </article>
+
+      <article class="service-card light">
+        <div class="icon">?</div>
+        <div>
+          <div class="brand">Формат услуги</div>
+          <div class="pill">Консультация</div>
+        </div>
+        <div>
+          <h3>Разовая консультация</h3>
+          <p>Для тех, кто хочет понять потенциал объекта, проверить решения, выбрать направление или не наломать дров перед ремонтом.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- TICKER 3 -->
+  <div class="ticker violet">
+    <div class="ticker-track">
+      <span>Яркий интерьер. Понятный процесс. Реализация без стресса.</span>
+      <i class="mark"></i>
+      <span>Яркий интерьер. Понятный процесс. Реализация без стресса.</span>
+      <i class="mark"></i>
+      <span>Яркий интерьер. Понятный процесс. Реализация без стресса.</span>
+      <i class="mark"></i>
+      <span>Яркий интерьер. Понятный процесс. Реализация без стресса.</span>
+      <i class="mark"></i>
+    </div>
+  </div>
+
+  <!-- FINAL CTA -->
+  <section class="final reveal">
+    <h2>Сыграем в дизайн?</h2>
+  </section>
+
+  <!-- FOOTER / CONTACT -->
+  <footer id="contact">
+    <div class="footer-grid">
+      <div class="footer-text">
+        <h2>Давайте обсудим<br>ваш проект</h2>
+        <p>Напишите пару слов об объекте: город, площадь, стадия ремонта и что хотите получить. Я подскажу, какой формат работы подойдёт.</p>
+        <a class="footer-cta" href="https://wa.me/77077770042" target="_blank" rel="noopener">Оставить заявку</a>
+        <div class="socials">
+          <a href="https://www.instagram.com/assem_danakhmet?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener">Instagram →</a>
+          <a href="https://t.me/assem_d" target="_blank" rel="noopener">Telegram →</a>
+        </div>
+      </div>
+    </div>
+    <div class="huge-logo">ASSEM</div>
+  </footer>
+
+  <!-- STICKY MOBILE CTA -->
+  <div class="sticky-cta" id="sticky-cta" aria-hidden="true">
+    <a href="#contact">Обсудить проект</a>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
