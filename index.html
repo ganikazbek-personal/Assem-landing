@@ -40,12 +40,8 @@
     <svg class="hero-waves" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" shape-rendering="geometricPrecision">
       <defs>
         <filter id="wf" x="-80%" y="-80%" width="260%" height="260%">
-          <feTurbulence type="fractalNoise" baseFrequency="0.0038" numOctaves="2" seed="9" result="t">
-            <animate attributeName="baseFrequency"
-              values="0.0032;0.0045;0.0038;0.0032"
-              dur="22s" repeatCount="indefinite"/>
-          </feTurbulence>
-          <feDisplacementMap in="SourceGraphic" in2="t" scale="310" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
+          <feTurbulence id="waveTurb" type="fractalNoise" baseFrequency="0.0038" numOctaves="2" seed="9" result="t"/>
+          <feDisplacementMap in="SourceGraphic" in2="t" scale="180" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
           <feGaussianBlur in="displaced" stdDeviation="1.2"/>
         </filter>
       </defs>

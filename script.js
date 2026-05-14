@@ -102,3 +102,27 @@ if (stickyCta && heroSection && contactSection) {
     stickyCta.classList.remove('visible');
   });
 }
+
+/* =========================================
+   WAVE ANIMATION — JS RAF (iOS Safari fix)
+   ========================================= */
+const waveTurb = document.getElementById('waveTurb');
+if (waveTurb) {
+  let t = 0;
+  let rafId;
+
+  function animateWave() {
+    t += 0.25;
+    const bf = (0.0038 + Math.sin(t * Math.PI / 180) * 0.0006).toFixed(5);
+    waveTurb.setAttribute('baseFrequency', bf);
+    rafId = requestAnimationFrame(animateWave);
+  }
+
+  // Pause when tab is hidden to save battery
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) cancelAnimationFrame(rafId);
+    else rafId = requestAnimationFrame(animateWave);
+  });
+
+  rafId = requestAnimationFrame(animateWave);
+}
