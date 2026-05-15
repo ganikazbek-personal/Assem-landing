@@ -1346,6 +1346,72 @@ footer {
 }
 
 /* =========================================
+   GEOGRAPHY SECTION
+   ========================================= */
+.geo {
+  background: var(--black);
+  color: var(--air);
+  padding: 80px 48px;
+  text-align: center;
+}
+
+.geo-inner {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.geo-label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  opacity: 0.45;
+  margin: 0 0 24px;
+}
+
+.geo-heading {
+  font-size: 64px;
+  font-weight: 900;
+  letter-spacing: -3px;
+  line-height: 1;
+  margin: 0 0 18px;
+}
+
+.geo-sub {
+  font-size: 19px;
+  opacity: 0.55;
+  margin: 0 0 40px;
+  font-weight: 500;
+}
+
+.geo-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.geo-tags span {
+  border: 1px solid rgba(247,244,239,0.2);
+  border-radius: 100px;
+  padding: 8px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.65;
+  letter-spacing: 0.2px;
+}
+
+@media (max-width: 900px) {
+  .geo { padding: 64px 24px; }
+  .geo-heading { font-size: 44px; letter-spacing: -2px; }
+  .geo-sub { font-size: 16px; }
+}
+
+@media (max-width: 390px) {
+  .geo-heading { font-size: 34px; letter-spacing: -1.5px; }
+}
+
+/* =========================================
    REDUCED MOTION
    ========================================= */
 @media (prefers-reduced-motion: reduce) {
