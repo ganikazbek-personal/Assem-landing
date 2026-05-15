@@ -1437,9 +1437,10 @@ picture { display: contents; }
 /* =========================================
    MOBILE PERFORMANCE — disable paint-heavy effects
    ========================================= */
+/* SVG displacement map filter is CPU-rasterized — removed on all devices */
+.hero-waves { display: none; }
+
 @media (max-width: 900px) {
-  /* SVG displacement map filter is CPU-rasterized — hide on mobile */
-  .hero-waves { display: none; }
 
   /* Larger on mobile, will-change hints a compositor layer for filter animation */
   .hero-character {
