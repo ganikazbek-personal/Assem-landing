@@ -732,37 +732,24 @@ h1 {
 .portfolio-btn:hover { opacity: 0.85; }
 
 .portfolio-btn.secondary {
-  background: var(--lime);
-  color: var(--black);
-  position: relative;
-  overflow: hidden;
-  transform: translateZ(0);
+  background: var(--black);
+  animation: btnWiggle 4s ease-in-out infinite;
 }
 
-/* Shimmer sweep — light streak every 3s */
-.portfolio-btn.secondary::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -80%;
-  width: 45%;
-  height: 200%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);
-  transform: skewX(-18deg);
-  animation: btnShine 3s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes btnShine {
-  0%, 45%  { left: -80%; }
-  75%      { left: 130%; }
-  76%, 100% { left: 130%; opacity: 0; }
+@keyframes btnWiggle {
+  0%, 70%, 100% { transform: translateX(0); }
+  73%           { transform: translateX(-4px); }
+  76%           { transform: translateX(4px); }
+  79%           { transform: translateX(-3px); }
+  82%           { transform: translateX(3px); }
+  85%           { transform: translateX(-1px); }
+  88%           { transform: translateX(1px); }
+  91%           { transform: translateX(0); }
 }
 
 .portfolio-btn.secondary:hover {
   opacity: 1;
-  transform: scale(1.03) translateY(-2px);
-  box-shadow: 0 10px 28px rgba(217, 255, 74, 0.45);
+  animation-play-state: paused;
 }
 
 /* =========================================
