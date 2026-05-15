@@ -939,11 +939,11 @@ h1 {
 .final h2 {
   position: relative;
   z-index: 1;
-  font-size: 80px;
+  font-size: 112px;
   line-height: 1;
   font-style: italic;
   font-weight: 900;
-  letter-spacing: -2px;
+  letter-spacing: -4px;
   margin: 0;
 }
 
@@ -1140,8 +1140,8 @@ footer {
   .service-card p { font-size: 16px; }
 
   /* Final */
-  .final { height: 300px; }
-  .final h2 { font-size: 36px; letter-spacing: -1px; }
+  .final { height: 340px; }
+  .final h2 { font-size: 52px; letter-spacing: -2px; }
 
   /* Footer */
   footer {
@@ -1238,7 +1238,7 @@ footer {
   .services .big { font-size: 30px; }
 
   /* Final */
-  .final h2 { font-size: 32px; }
+  .final h2 { font-size: 44px; }
 
   /* Footer — hide placeholder on tiny screens */
   .footer-photo-placeholder { display: none; }
@@ -1263,7 +1263,7 @@ footer {
   .services .small { font-size: 18px; }
   .services .big { font-size: 26px; }
   .pill { font-size: 22px; padding: 2px 14px 7px; border-width: 3px; margin-bottom: 16px; }
-  .final h2 { font-size: 28px; }
+  .final h2 { font-size: 38px; }
   .footer-text h2 { font-size: 28px; }
   .huge-logo { font-size: 26vw; }
   /* Drawer at 390px */
@@ -1313,7 +1313,7 @@ footer {
   .service-card h3 { font-size: 20px; }
   .service-card p { font-size: 14px; }
 
-  .final h2 { font-size: 24px; }
+  .final h2 { font-size: 32px; }
   .footer-text h2 { font-size: 24px; }
   .footer-text p { font-size: 14px; }
   .huge-logo { font-size: 28vw; }
@@ -1441,10 +1441,10 @@ picture { display: contents; }
   /* SVG displacement map filter is CPU-rasterized — hide on mobile */
   .hero-waves { display: none; }
 
-  /* filter: hue-rotate forces repaint every frame — freeze on mobile */
+  /* Larger on mobile, will-change hints a compositor layer for filter animation */
   .hero-character {
-    animation: none;
-    filter: invert(1) hue-rotate(220deg); /* static violet-tinted tone */
+    height: 300px;
+    will-change: filter;
   }
 }
 
@@ -1458,7 +1458,7 @@ picture { display: contents; }
   .tool-rotator svg { animation: none; opacity: 0; }
   .tool-rotator svg:first-child { opacity: 1; transform: scale(1) rotate(0deg) translateY(0); }
   .hero-waves       { display: none; }
-  .hero-character   { animation: none; filter: invert(1) hue-rotate(220deg); }
+  .hero-character   { animation: none !important; filter: invert(1) hue-rotate(220deg); }
   .reveal           { transition: none; }
   .sticky-cta       { transition: none; }
   .nav-drawer       { transition: none; }
