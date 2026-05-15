@@ -34,6 +34,10 @@
   <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
   <link rel="apple-touch-icon" href="favicon.png">
 
+  <!-- Preload critical above-fold images -->
+  <link rel="preload" as="image" type="image/avif" href="character.avif" fetchpriority="high">
+  <link rel="preload" as="image" type="image/avif" href="projects/eclat/01.avif">
+
   <link rel="stylesheet" href="styles.css">
 
   <!-- LocalBusiness structured data -->
@@ -132,7 +136,10 @@
       </g>
     </svg>
     <div class="hero-content">
-      <img class="hero-character" src="character.png" alt="Дизайнер интерьеров Assem Danakhmet" loading="eager">
+      <picture>
+        <source srcset="character.avif" type="image/avif">
+        <img class="hero-character" src="character.png" alt="Дизайнер интерьеров Assem Danakhmet" fetchpriority="high" decoding="async">
+      </picture>
       <h1>
         <span class="h1-line">Создаю
           <span class="tool-rotator" aria-label="Инструменты дизайна">
@@ -265,28 +272,40 @@
 
 <div class="project-archive">
       <a class="archive-card" href="gallery.html#eclat">
-        <img src="projects/eclat/01.jpg" alt="Éclat — дизайн интерьера квартиры, Астана" loading="lazy">
+        <picture>
+          <source srcset="projects/eclat/01.avif" type="image/avif">
+          <img src="projects/eclat/01.jpg" alt="Éclat — дизайн интерьера квартиры, Астана" loading="lazy" decoding="async">
+        </picture>
         <div>
           <b>Éclat</b>
           <span>Астана</span>
         </div>
       </a>
       <a class="archive-card" href="gallery.html#amore">
-        <img src="projects/amore/05.jpg" alt="Amore — дизайн квартиры с синими акцентами, Астана" loading="lazy">
+        <picture>
+          <source srcset="projects/amore/05.avif" type="image/avif">
+          <img src="projects/amore/05.jpg" alt="Amore — дизайн квартиры с синими акцентами, Астана" loading="lazy" decoding="async">
+        </picture>
         <div>
           <b>Amore</b>
           <span>Астана</span>
         </div>
       </a>
       <a class="archive-card" href="gallery.html#olive">
-        <img src="projects/olive/01.jpg" alt="Olive — современный дизайн интерьера, Астана" loading="lazy">
+        <picture>
+          <source srcset="projects/olive/01.avif" type="image/avif">
+          <img src="projects/olive/01.jpg" alt="Olive — современный дизайн интерьера, Астана" loading="lazy" decoding="async">
+        </picture>
         <div>
           <b>Olive</b>
           <span>Астана</span>
         </div>
       </a>
       <a class="archive-card" href="gallery.html#medvedevo">
-        <img src="projects/medvedevo/01.jpg" alt="Medvedevo — дизайн интерьера загородного дома, Москва" loading="lazy">
+        <picture>
+          <source srcset="projects/medvedevo/01.avif" type="image/avif">
+          <img src="projects/medvedevo/01.jpg" alt="Medvedevo — дизайн интерьера загородного дома, Москва" loading="lazy" decoding="async">
+        </picture>
         <div>
           <b>Medvedevo</b>
           <span>Москва</span>
@@ -466,6 +485,6 @@
     <a href="#contact">Обсудить проект</a>
   </div>
 
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
 </body>
 </html>

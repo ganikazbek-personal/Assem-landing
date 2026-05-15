@@ -469,6 +469,9 @@ h1 {
   position: absolute;
   inset: 0;
   background: url('assem-photo.jpg') center 25% / cover no-repeat;
+  background-image: image-set(url('assem-photo.avif') type('image/avif'), url('assem-photo.jpg') type('image/jpeg'));
+  background-position: center 25%;
+  background-size: cover;
 }
 
 /* Fragment 1 — left strip, tilted left */
@@ -1346,6 +1349,11 @@ footer {
 }
 
 /* =========================================
+   PICTURE — transparent wrapper for <picture> elements
+   ========================================= */
+picture { display: contents; }
+
+/* =========================================
    VISUALLY HIDDEN (SEO / accessibility)
    ========================================= */
 .sr-only {
@@ -1427,6 +1435,20 @@ footer {
 }
 
 /* =========================================
+   MOBILE PERFORMANCE — disable paint-heavy effects
+   ========================================= */
+@media (max-width: 900px) {
+  /* SVG displacement map filter is CPU-rasterized — hide on mobile */
+  .hero-waves { display: none; }
+
+  /* filter: hue-rotate forces repaint every frame — freeze on mobile */
+  .hero-character {
+    animation: none;
+    filter: invert(1) hue-rotate(220deg); /* static violet-tinted tone */
+  }
+}
+
+/* =========================================
    REDUCED MOTION
    ========================================= */
 @media (prefers-reduced-motion: reduce) {
@@ -1435,6 +1457,8 @@ footer {
   .tool-rotator::before { animation: none; }
   .tool-rotator svg { animation: none; opacity: 0; }
   .tool-rotator svg:first-child { opacity: 1; transform: scale(1) rotate(0deg) translateY(0); }
+  .hero-waves       { display: none; }
+  .hero-character   { animation: none; filter: invert(1) hue-rotate(220deg); }
   .reveal           { transition: none; }
   .sticky-cta       { transition: none; }
   .nav-drawer       { transition: none; }
