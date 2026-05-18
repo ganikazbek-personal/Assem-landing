@@ -472,27 +472,7 @@ h1 {
   background-image: image-set(url('assem-photo.avif') type('image/avif'), url('assem-photo.jpg') type('image/jpeg'));
   background-position: center 28%;
   background-size: cover;
-}
-
-/* Fragment 1 — left strip, tilted left */
-.frag-1 {
-  clip-path: polygon(0 0, 38% 0, 22% 100%, 0 100%);
-  transform: rotate(-2.5deg) translate(-5px, 4px);
-  box-shadow: -6px 6px 28px rgba(0, 0, 0, .4);
-}
-
-/* Fragment 2 — center strip, slight float up */
-.frag-2 {
-  clip-path: polygon(40% 0, 63% 0, 77% 100%, 24% 100%);
-  transform: rotate(0.5deg) translate(2px, -6px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, .45);
-}
-
-/* Fragment 3 — right strip, tilted right */
-.frag-3 {
-  clip-path: polygon(65% 0, 100% 0, 100% 100%, 79% 100%);
-  transform: rotate(2.5deg) translate(6px, 5px);
-  box-shadow: 6px 6px 28px rgba(0, 0, 0, .4);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, .35);
 }
 
 /* Black nameplate badge */
