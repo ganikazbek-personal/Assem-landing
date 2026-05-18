@@ -468,9 +468,9 @@ h1 {
 .photo-frag {
   position: absolute;
   inset: 0;
-  background: url('assem-photo.jpg') center 60% / cover no-repeat;
+  background: url('assem-photo.jpg') center 28% / cover no-repeat;
   background-image: image-set(url('assem-photo.avif') type('image/avif'), url('assem-photo.jpg') type('image/jpeg'));
-  background-position: center 60%;
+  background-position: center 28%;
   background-size: cover;
 }
 
