@@ -508,6 +508,12 @@
     (() => {
       const ph = (ev, props) => window.posthog && posthog.capture(ev, props);
       document.addEventListener('click', (e) => {
+        const btn = e.target.closest('button');
+        if (btn) {
+          if (btn.classList.contains('nav-hamburger'))    ph('menu_open');
+          if (btn.classList.contains('nav-drawer-close')) ph('menu_close');
+          return;
+        }
         const a = e.target.closest('a');
         if (!a) return;
         const href = a.getAttribute('href') || '';
@@ -517,7 +523,7 @@
           ph('contact_click', { channel: 'instagram', placement: 'socials' });
         } else if (href.includes('t.me')) {
           ph('contact_click', { channel: 'telegram', placement: 'socials' });
-        } else if (href === '#contact') {
+        } else if (href.endsWith('#contact')) {
           const placement =
             a.classList.contains('main-btn')    ? 'hero' :
             a.classList.contains('nav-btn')     ? 'nav' :
@@ -527,6 +533,9 @@
           ph('scroll_to_contact', { placement });
         } else if (href.startsWith('/gallery')) {
           ph('gallery_open', { project: href.includes('#') ? href.split('#')[1] : 'all' });
+        } else if (href.includes('#')) {
+          const item = href.split('#')[1] || 'home';
+          ph('nav_click', { item, placement: a.closest('.nav-drawer') ? 'mobile_menu' : 'nav' });
         }
       });
     })();

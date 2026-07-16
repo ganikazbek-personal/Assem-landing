@@ -1160,6 +1160,13 @@
     (() => {
       const ph = (ev, props) => window.posthog && posthog.capture(ev, props);
       document.addEventListener('click', (e) => {
+        const btn = e.target.closest('button');
+        if (btn) {
+          if (btn.classList.contains('nav-hamburger'))    ph('menu_open');
+          if (btn.classList.contains('nav-drawer-close')) ph('menu_close');
+          if (btn.id === 'lb-close')                      ph('lightbox_close');
+          return;
+        }
         const a = e.target.closest('a');
         if (!a) return;
         const href = a.getAttribute('href') || '';
@@ -1169,8 +1176,13 @@
           ph('contact_click', { channel: 'instagram', placement: 'socials' });
         } else if (href.includes('t.me')) {
           ph('contact_click', { channel: 'telegram', placement: 'socials' });
-        } else if (href === '#contact') {
-          ph('scroll_to_contact', { placement: a.closest('#sticky-cta') ? 'sticky' : 'nav' });
+        } else if (href.endsWith('#contact')) {
+          ph('scroll_to_contact', { placement: a.classList.contains('drawer-cta') ? 'mobile_menu' : 'nav' });
+        } else if (href.includes('#')) {
+          const item = href.split('#')[1] || 'home';
+          ph('nav_click', { item, placement: a.closest('.nav-drawer') ? 'mobile_menu' : 'nav' });
+        } else if (href === '/') {
+          ph('nav_click', { item: 'home', placement: a.classList.contains('back') ? 'back_button' : 'logo' });
         }
       });
     })();
