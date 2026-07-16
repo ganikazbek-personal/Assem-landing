@@ -1163,13 +1163,17 @@ footer {
   }
   .socials {
     justify-content: flex-start;
-    gap: 10px;
+    flex-wrap: nowrap;
+    gap: 8px;
     margin-top: 16px;
   }
   .socials a {
-    padding: 13px 18px;
-    font-size: 15px;
+    flex: 1;
+    text-align: center;
+    padding: 13px 6px;
+    font-size: 13px;
     border-radius: 4px;
+    white-space: nowrap;
   }
   .huge-logo { font-size: 23vw; bottom: -40px; letter-spacing: -1.5vw; }
 
