@@ -1114,6 +1114,7 @@
         lbProject.textContent = section ? section.querySelector('h2').textContent : '';
         lb.classList.add('open');
         document.body.style.overflow = 'hidden';
+        if (window.posthog) posthog.capture('photo_view', { project: lbProject.textContent, photo_index: current + 1 });
       }
 
       function close() {
@@ -1153,5 +1154,26 @@
     window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
   </script>
   <script defer src="/_vercel/speed-insights/script.js"></script>
+
+  <!-- PostHog custom events -->
+  <script>
+    (() => {
+      const ph = (ev, props) => window.posthog && posthog.capture(ev, props);
+      document.addEventListener('click', (e) => {
+        const a = e.target.closest('a');
+        if (!a) return;
+        const href = a.getAttribute('href') || '';
+        if (href.includes('wa.me')) {
+          ph('contact_click', { channel: 'whatsapp', placement: a.classList.contains('footer-cta') ? 'footer_cta' : 'socials' });
+        } else if (href.includes('instagram.com')) {
+          ph('contact_click', { channel: 'instagram', placement: 'socials' });
+        } else if (href.includes('t.me')) {
+          ph('contact_click', { channel: 'telegram', placement: 'socials' });
+        } else if (href === '#contact') {
+          ph('scroll_to_contact', { placement: a.closest('#sticky-cta') ? 'sticky' : 'nav' });
+        }
+      });
+    })();
+  </script>
 </body>
 </html>

@@ -502,5 +502,34 @@
     window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
   </script>
   <script defer src="/_vercel/speed-insights/script.js"></script>
+
+  <!-- PostHog custom events -->
+  <script>
+    (() => {
+      const ph = (ev, props) => window.posthog && posthog.capture(ev, props);
+      document.addEventListener('click', (e) => {
+        const a = e.target.closest('a');
+        if (!a) return;
+        const href = a.getAttribute('href') || '';
+        if (href.includes('wa.me')) {
+          ph('contact_click', { channel: 'whatsapp', placement: a.classList.contains('footer-cta') ? 'footer_cta' : 'socials' });
+        } else if (href.includes('instagram.com')) {
+          ph('contact_click', { channel: 'instagram', placement: 'socials' });
+        } else if (href.includes('t.me')) {
+          ph('contact_click', { channel: 'telegram', placement: 'socials' });
+        } else if (href === '#contact') {
+          const placement =
+            a.classList.contains('main-btn')    ? 'hero' :
+            a.classList.contains('nav-btn')     ? 'nav' :
+            a.classList.contains('drawer-cta')  ? 'mobile_menu' :
+            a.closest('#sticky-cta')            ? 'sticky' :
+            a.classList.contains('portfolio-btn') ? 'portfolio' : 'other';
+          ph('scroll_to_contact', { placement });
+        } else if (href.startsWith('/gallery')) {
+          ph('gallery_open', { project: href.includes('#') ? href.split('#')[1] : 'all' });
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
