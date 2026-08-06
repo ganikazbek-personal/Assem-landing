@@ -12,6 +12,16 @@
   })(window,document,'script','dataLayer','GTM-T37J2PV5');</script>
   <!-- End Google Tag Manager -->
 
+  <!-- Google tag (gtag.js) — GA4. Loaded directly, NOT via a GTM tag: adding a
+       GA4 Configuration tag in GTM as well would double-count every pageview. -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CXG1EQ6NJG"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CXG1EQ6NJG');
+  </script>
+
   <title>Проекты по дизайну интерьеров — Алматы, Астана, Москва | Assem Danakhmet</title>
   <meta name="description" content="Портфолио проектов по дизайну интерьеров квартир и домов в Алматы, Астане и Москве. Яркие современные интерьеры с характером.">
   <meta name="robots" content="index, follow">
@@ -1126,7 +1136,11 @@
         lbProject.textContent = section ? section.querySelector('h2').textContent : '';
         lb.classList.add('open');
         document.body.style.overflow = 'hidden';
-        if (window.posthog) posthog.capture('photo_view', { project: lbProject.textContent, photo_index: current + 1 });
+        const photoProps = Object.assign({ project: lbProject.textContent, photo_index: current + 1 },
+                                         window.__attr && window.__attr.props());
+        if (window.posthog) posthog.capture('photo_view', photoProps);
+        if (window.gtag) gtag('event', 'photo_view', photoProps);
+        (window.dataLayer = window.dataLayer || []).push(Object.assign({ event: 'photo_view' }, photoProps));
       }
 
       function close() {
@@ -1167,10 +1181,15 @@
   </script>
   <script defer src="/_vercel/speed-insights/script.js"></script>
 
-  <!-- PostHog custom events -->
+  <!-- Custom events -> PostHog + GA4 + GTM dataLayer -->
   <script>
     (() => {
-      const ph = (ev, props) => window.posthog && posthog.capture(ev, props);
+      const ph = (ev, props) => {
+        const p = Object.assign({}, window.__attr && window.__attr.props(), props);
+        if (window.posthog) posthog.capture(ev, p);
+        if (window.gtag) gtag('event', ev, p);
+        (window.dataLayer = window.dataLayer || []).push(Object.assign({ event: ev }, p));
+      };
       document.addEventListener('click', (e) => {
         const btn = e.target.closest('button');
         if (btn) {
