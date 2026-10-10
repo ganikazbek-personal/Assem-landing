@@ -638,7 +638,7 @@ h1 {
 .project-archive {
   margin-top: 32px;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 20px;
 }
 
@@ -1116,6 +1116,7 @@ footer {
   .metric span { font-size: 13px; }
   .project-card > img { min-height: 260px; }
   .project-archive { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .archive-card:first-child { grid-column: 1 / -1; }
   .archive-card { min-height: 200px; }
   .archive-card b { font-size: 22px; }
 
