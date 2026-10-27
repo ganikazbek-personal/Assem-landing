@@ -468,9 +468,9 @@ h1 {
 .photo-frag {
   position: absolute;
   inset: 0;
-  background: url('assem-photo.jpg') center 30% / cover no-repeat;
+  background: url('assem-photo.jpg') center 40% / cover no-repeat;
   background-image: image-set(url('assem-photo.avif') type('image/avif'), url('assem-photo.jpg') type('image/jpeg'));
-  background-position: center 30%;
+  background-position: center 40%;
   background-size: cover;
   box-shadow: 0 8px 40px rgba(0, 0, 0, .35);
 }
@@ -1090,7 +1090,7 @@ footer {
   /* Designer photo fragments — mobile */
   .about-photo-wrap { padding-bottom: 56px; }
   .photo-fragments { height: 400px; }
-  .photo-frag { background-position: center 30%; }
+  .photo-frag { background-position: center 40%; }
   .photo-nameplate { right: 0; bottom: 6px; padding: 11px 18px 13px; }
   .photo-nameplate-name { font-size: 28px; letter-spacing: -1px; }
   .photo-nameplate-desc { font-size: 10px; margin-top: 4px; }
