@@ -165,7 +165,7 @@ const attribution = (() => {
 
   // Prefill the message so the code reaches the inbox. Built by hand rather than
   // URLSearchParams — wa.me wants %20, not "+", or the pluses show up in the chat.
-  const message = `Здравствуйте! Хочу узнать цену на дизайн интерьера. (#${record.code})`;
+  const message = `Здравствуйте, Асем! Хочу обсудить с вами дизайн-проект своего интерьера. (#${record.code})`;
   document.querySelectorAll('a[href*="wa.me"]').forEach((a) => {
     if (a.href.includes('text=')) return;
     a.href += (a.href.includes('?') ? '&' : '?') + 'text=' + encodeURIComponent(message);
