@@ -35,9 +35,13 @@
       e.target.loading = 'eager';
       ahead.unobserve(e.target);
     }), { rootMargin: '1600px 0px' });
-    // only after the cover has arrived, so these don't hold it back
-    const start = () => imgs.forEach((img) => ahead.observe(img));
-    document.readyState === 'complete' ? start() : addEventListener('load', start, { once: true });
+    // only after the cover has arrived, so these don't hold it back (not the whole page:
+    // its load event also waits for the analytics scripts)
+    let started = false;
+    const start = () => { if (!started) { started = true; imgs.forEach((img) => ahead.observe(img)); } };
+    const cover = document.querySelector('.project-hero-bg img');
+    if (!cover || cover.complete) start();
+    else { cover.addEventListener('load', start, { once: true }); cover.addEventListener('error', start, { once: true }); setTimeout(start, 2500); }
   }
 
   /* LIGHTBOX */

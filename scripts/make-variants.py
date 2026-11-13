@@ -12,6 +12,9 @@ For projects/<slug>/NN.jpg it writes
     projects/<slug>/w480/NN.jpg     for places with no format fallback (SVG <image>, CSS blur)
     projects/<slug>/w24/NN.jpg      a ~0.5 KB blurry preview, inlined as the placeholder
 where <fmt> is avif, or webp for projects whose AVIFs don't decode in Chrome (chic).
+It also writes the full-size projects/<slug>/NN.avif when it's missing (quality 52: the
+cover, the lightbox and the next-project cover use it). `--recompress` re-encodes the
+existing full-size AVIFs from their JPEGs at that quality.
 Existing copies newer than their source are skipped, so re-runs are cheap.
 Needs Pillow with AVIF support (Pillow >= 11).
 """
@@ -22,7 +25,8 @@ from PIL import Image, ImageOps, features
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WIDTHS = (480, 960)
 WEBP_ONLY = {'chic'}
-QUALITY = {'avif': {480: 52, 960: 58}, 'webp': {480: 74, 960: 78}, 'jpg': {480: 78, 24: 45}}
+QUALITY = {'avif': {480: 52, 960: 58, 0: 52}, 'webp': {480: 74, 960: 78}, 'jpg': {480: 78, 24: 45}}
+RECOMPRESS = '--recompress' in sys.argv
 
 if not features.check('avif'):
     sys.exit('Pillow was built without AVIF support')
@@ -58,14 +62,17 @@ for slug in sorted(os.listdir(projects)):
         jobs = [(w, fmt) for w in WIDTHS] + [(480, 'jpg'), (24, 'jpg')]
         jobs = [(w, f, os.path.join(folder, f'w{w}', f'{stem}.{f}')) for w, f in jobs]
         todo = [j for j in jobs if not fresh(j[2], src)]
+        full = os.path.join(folder, f'{stem}.avif')                 # width 0 = full size
+        if fmt == 'avif' and (RECOMPRESS or not os.path.exists(full)):
+            todo.append((0, 'avif', full))
         if not todo:
             skipped += len(jobs)
             continue
         im = ImageOps.exif_transpose(Image.open(src)).convert('RGB')
         for w, f, dst in todo:
-            if im.width <= w:
+            if w and im.width <= w:
                 continue
-            small = im.resize((w, round(im.height * w / im.width)), Image.LANCZOS)
+            small = im.resize((w, round(im.height * w / im.width)), Image.LANCZOS) if w else im
             save(small, dst, f, w)
             made += 1
 

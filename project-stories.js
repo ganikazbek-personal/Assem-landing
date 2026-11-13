@@ -36,10 +36,14 @@
   // Photos load ahead of the viewer: the next few slides at once, the rest once the
   // stories have been on screen for a moment
   const imgsOf = (s) => [...s.querySelectorAll('img')];
-  // Nothing is fetched ahead until the page (and its cover photo) has loaded
-  const ready = () => document.readyState === 'complete';
+  // Nothing is fetched ahead until the cover photo has arrived (or 2.5 s have passed)
+  const cover = document.querySelector('.project-hero-bg img');
+  let coverIn = !cover || cover.complete;
+  const ready = () => coverIn || document.readyState === 'complete';
   const warm = (from, count = slides.length) => ready() && slides.slice(from, from + count)
     .forEach((s) => imgsOf(s).forEach((img) => { if (img.loading === 'lazy') img.loading = 'eager'; }));
+  const coverArrived = () => { if (!coverIn) { coverIn = true; warm(i, 4); } };
+  if (!coverIn) { cover.addEventListener('load', coverArrived, { once: true }); cover.addEventListener('error', coverArrived, { once: true }); setTimeout(coverArrived, 2500); }
   addEventListener('load', () => warm(i, 4), { once: true });
   let warmedAll = false;
 

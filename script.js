@@ -181,3 +181,29 @@ const attribution = (() => {
 window.__attr = attribution;
 
 /* Wave animation is static — CSS wavesDrift handles motion via GPU-composited transform */
+
+/* =========================================
+   PROJECT PAGES — start fetching the page and its cover photo on touch / hover,
+   so the tap that follows opens it faster
+   ========================================= */
+(() => {
+  const seen = new Set();
+  const warm = (e) => {
+    const a = e.target.closest && e.target.closest('a[href^="/projects/"]');
+    if (!a || seen.has(a.href)) return;
+    seen.add(a.href);
+    // rel=prefetch keeps going when the tap navigates away (an <img> started here would
+    // be cancelled with this page and the cover downloaded twice)
+    [[a.href, ''], [a.dataset.cover, 'image']].forEach(([href, as]) => {
+      if (!href) return;
+      const link = document.createElement('link');
+      link.rel = 'prefetch';
+      link.href = href;
+      if (as) link.as = as;
+      document.head.append(link);
+    });
+  };
+  addEventListener('touchstart', warm, { passive: true });
+  addEventListener('pointerdown', warm, { passive: true });
+  addEventListener('mouseover', warm, { passive: true });
+})();

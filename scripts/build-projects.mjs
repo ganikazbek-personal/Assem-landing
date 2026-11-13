@@ -90,7 +90,7 @@ function photosOf(slug, format = 'avif') {
 // without it only the original is offered. `cap` leaves the original out, for images
 // under a dark overlay (cards, the next-project cover) where 960px is plenty even on
 // a 3× phone screen that would otherwise ask for the full file.
-function pic(slug, ph, { alt, cls = '', eager = false, sizes = null, cap = false }, pad) {
+function pic(slug, ph, { alt, cls = '', eager = false, sizes = null, cap = false, low = false }, pad) {
   const src = `/projects/${slug}/${ph.id}`;
   const capped = cap && ph.widths.includes(960);
   const set = sizes && ph.widths.length
@@ -101,7 +101,8 @@ function pic(slug, ph, { alt, cls = '', eager = false, sizes = null, cap = false
     ph.modern && `  <source ${set} type="image/${ph.modern}">`,
     // a blurry inline preview shows until the photo arrives — the cover too, so a phone
     // on a slow connection sees the room at once instead of a dark screen
-    `  <img src="${src}.jpg" alt="${esc(alt)}" width="${ph.w}" height="${ph.h}"${eager ? ' fetchpriority="high"' : ' loading="lazy"'} decoding="async"${ph.lqip ? ` style="background: url(${ph.lqip}) 50% / cover no-repeat"` : ''}>`,
+    // `low`: the grid — the browser fetches it behind the cover instead of alongside
+    `  <img src="${src}.jpg" alt="${esc(alt)}" width="${ph.w}" height="${ph.h}"${eager ? ' fetchpriority="high"' : ' loading="lazy"'}${low ? ' fetchpriority="low"' : ''} decoding="async"${ph.lqip ? ` style="background: url(${ph.lqip}) 50% / cover no-repeat"` : ''}>`,
     '</picture>',
   ].filter(Boolean).map((line) => pad + line).join('\n');
 }
@@ -473,7 +474,7 @@ function projectPage(p, next) {
     : '';
 
   const grid = p.photos
-    .map((ph, i) => pic(p.slug, ph, { alt: `${p.name} — ${p.seo}, фото ${i + 1}`, sizes: '(max-width: 900px) 50vw, 33vw' }, '      '))
+    .map((ph, i) => pic(p.slug, ph, { alt: `${p.name} — ${p.seo}, фото ${i + 1}`, sizes: '(max-width: 900px) 50vw, 33vw', low: true }, '      '))
     .join('\n');
 
   return `<!DOCTYPE html>
@@ -507,9 +508,11 @@ function projectPage(p, next) {
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
   <link rel="preload" as="image"${p.cover.modern ? ` type="image/${p.cover.modern}"` : ''} href="/projects/${p.slug}/${p.cover.id}.${p.cover.modern || 'jpg'}" fetchpriority="high">
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/cormorant-latin.woff2" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/nunito-sans-cyrillic.woff2" crossorigin>${scroll || zones ? `
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant:wght@400&family=Nunito+Sans:wght@400;600${scroll ? '&family=IBM+Plex+Mono:wght@400;500' : ''}${zones ? '&family=Caveat:wght@500;600;700' : ''}&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?${[scroll && 'family=IBM+Plex+Mono:wght@400;500', zones && 'family=Caveat:wght@500;600;700'].filter(Boolean).join('&')}&display=swap">` : ''}
   <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/project.css">${scroll ? '\n  <link rel="stylesheet" href="/project-story.css">' : ''}${p.story ? '\n  <link rel="stylesheet" href="/project-stories.css">' : ''}
 
@@ -548,7 +551,7 @@ ${grid}
   </section>
 
   <!-- NEXT PROJECT -->
-  <a class="project-next" href="/projects/${next.slug}">
+  <a class="project-next" href="/projects/${next.slug}" data-cover="${coverUrl(next)}">
 ${pic(next.slug, next.cover, { alt: `${next.name} — ${next.seo}`, cls: 'project-next-bg', sizes: '100vw', cap: true }, '    ')}
     <span class="project-next-kicker">Следующий проект</span>
     <span class="project-next-title">${esc(next.name)}</span>
@@ -644,9 +647,12 @@ ${pic(next.slug, next.cover, { alt: `${next.name} — ${next.seo}`, cls: 'projec
 `;
 }
 
+// The project page's cover, as its <picture> loads it — fetched ahead on touch by script.js
+const coverUrl = (p) => `/projects/${p.slug}/${p.cover.id}.${p.cover.modern || 'jpg'}`;
+
 function galleryCard(p) {
   const meta = [p.city, `${p.photos.length} фото`].filter(Boolean).join(' · ');
-  return `      <a class="archive-card" href="/projects/${p.slug}">
+  return `      <a class="archive-card" href="/projects/${p.slug}" data-cover="${coverUrl(p)}">
 ${pic(p.slug, p.cover, { alt: `${p.name} — ${p.seo}`, sizes: '(max-width: 900px) 50vw, 25vw', cap: true }, '        ')}
         <div>
           <b>${esc(p.name)}</b>
