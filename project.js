@@ -43,7 +43,8 @@
 
   function show(index) {
     current = (index + imgs.length) % imgs.length;
-    lbImg.src = imgs[current].currentSrc || imgs[current].src;
+    // the grid may have picked a smaller copy (w480/, w960/); the lightbox shows the original
+    lbImg.src = (imgs[current].currentSrc || imgs[current].src).replace(/\/w\d+\//, '/');
     lbImg.alt = imgs[current].alt;
     lbCount.textContent = `${current + 1} / ${imgs.length}`;
     lb.classList.add('open');

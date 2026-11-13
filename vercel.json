@@ -1,10 +1,32 @@
 {
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/home", "destination": "/index.html" }
+    {
+      "source": "/home",
+      "destination": "/index.html"
+    }
   ],
   "redirects": [
-    { "source": "/index.html", "destination": "/", "permanent": true },
-    { "source": "/gallery.html", "destination": "/gallery", "permanent": true }
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/gallery.html",
+      "destination": "/gallery",
+      "permanent": true
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)\\.(avif|webp|jpg|jpeg|png|svg)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, stale-while-revalidate=2592000"
+        }
+      ]
+    }
   ]
 }

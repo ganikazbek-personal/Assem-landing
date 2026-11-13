@@ -7,7 +7,10 @@
  *
  *   node scripts/build-projects.mjs
  *
- * Photos are picked up from projects/<slug>/NN.jpg, with NN.avif beside each.
+ * Photos are picked up from projects/<slug>/NN.jpg, with NN.avif beside each, and the
+ * smaller copies from scripts/make-variants.py (w480/, w960/) — run that first:
+ *
+ *   python3 scripts/make-variants.py && node scripts/build-projects.mjs
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -56,7 +59,11 @@ function jpegSize(file) {
   throw new Error(`No JPEG size in ${file}`);
 }
 
-// `format` is the lighter sibling served ahead of the JPG, when the file exists
+// Widths of the smaller copies made by scripts/make-variants.py
+const VARIANTS = [480, 960];
+
+// `format` is the lighter sibling served ahead of the JPG, when the file exists;
+// `widths` are the smaller copies of it that exist
 function photosOf(slug, format = 'avif') {
   const dir = path.join(ROOT, 'projects', slug);
   return fs.readdirSync(dir)
@@ -66,15 +73,25 @@ function photosOf(slug, format = 'avif') {
       const id = f.slice(0, -4);
       const { w, h } = jpegSize(path.join(dir, f));
       const modern = fs.existsSync(path.join(dir, `${id}.${format}`)) ? format : null;
-      return { id, w, h, modern };
+      const widths = modern ? VARIANTS.filter((v) => v < w && fs.existsSync(path.join(dir, `w${v}`, `${id}.${format}`))) : [];
+      const thumb = fs.existsSync(path.join(dir, 'w480', `${id}.jpg`));
+      return { id, w, h, modern, widths, thumb };
     });
 }
 
-function pic(slug, ph, { alt, cls = '', eager = false }, pad) {
+// `sizes` (how wide the image shows) lets the browser pick a smaller copy;
+// without it only the original is offered. `cap` leaves the original out, for images
+// under a dark overlay (cards, the next-project cover) where 960px is plenty even on
+// a 3× phone screen that would otherwise ask for the full file.
+function pic(slug, ph, { alt, cls = '', eager = false, sizes = null, cap = false }, pad) {
   const src = `/projects/${slug}/${ph.id}`;
+  const capped = cap && ph.widths.includes(960);
+  const set = sizes && ph.widths.length
+    ? `srcset="${[...ph.widths.map((v) => `/projects/${slug}/w${v}/${ph.id}.${ph.modern} ${v}w`), ...(capped ? [] : [`${src}.${ph.modern} ${ph.w}w`])].join(', ')}" sizes="${sizes}"`
+    : `srcset="${src}.${ph.modern}"`;
   return [
     `<picture${cls ? ` class="${cls}"` : ''}>`,
-    ph.modern && `  <source srcset="${src}.${ph.modern}" type="image/${ph.modern}">`,
+    ph.modern && `  <source ${set} type="image/${ph.modern}">`,
     `  <img src="${src}.jpg" alt="${esc(alt)}" width="${ph.w}" height="${ph.h}"${eager ? ' fetchpriority="high"' : ' loading="lazy"'} decoding="async">`,
     '</picture>',
   ].filter(Boolean).map((line) => pad + line).join('\n');
@@ -128,11 +145,13 @@ function storySection(p) {
       return { ...sh, ph };
     });
     const blurs = shots.map(({ ph }) => {
-      const src = `/projects/${p.slug}/${ph.id}`;
-      const set = ph.modern ? `; background-image: image-set(url(${src}.${ph.modern}) type('image/${ph.modern}'), url(${src}.jpg) type('image/jpeg'))` : '';
+      // blurred backdrop: the 480px copy is plenty
+      const src = `/projects/${p.slug}/${ph.thumb ? 'w480/' : ''}${ph.id}`;
+      const modern = ph.widths.includes(480) || !ph.thumb ? ph.modern : null;
+      const set = modern ? `; background-image: image-set(url(${src}.${modern}) type('image/${modern}'), url(${src}.jpg) type('image/jpeg'))` : '';
       return `        <div class="story-blur" style="background-image: url(${src}.jpg)${set}"></div>`;
     }).join('\n');
-    const photos = shots.map(({ ph }, j) => pic(p.slug, ph, { alt: `${p.name} — ${z.name.toLowerCase()}, фото ${j + 1}` }, '        ')).join('\n');
+    const photos = shots.map(({ ph }, j) => pic(p.slug, ph, { alt: `${p.name} — ${z.name.toLowerCase()}, фото ${j + 1}`, sizes: '(max-width: 900px) 100vw, 50vw' }, '        ')).join('\n');
     const pins = shots.map(({ notes }) => `        <div class="story-pins">${notes.map((n, k) => `
           <div class="story-pin" style="--x: ${n.x}%; --y: ${n.y}%"${n.x > 55 ? ' data-side="left"' : ''}><i>${k + 1}</i><span><b>${esc(n.title)}</b>${esc(n.text)}</span></div>`).join('')}
         </div>`).join('\n');
@@ -211,7 +230,7 @@ function polaroid(p, ph, { maxW, maxH, x, right, y, rot = 0, d = 0, notes = [], 
   const box = { x: left, y, w: w + 16, h: h + 16 };
   const html = `<figure class="st-polaroid st-in" style="left: ${left}px; top: ${y}px; --rot: ${rot}deg; --d: ${d}s">
           <div class="st-photo" style="width: ${w}px; height: ${h}px">
-${pic(p.slug, ph, { alt }, '            ')}
+${pic(p.slug, ph, { alt, sizes: `${w + 40}px` }, '            ')}
             ${pins}
           </div>
         </figure>`;
@@ -276,7 +295,7 @@ function storiesSection(p) {
         <p class="st-formula st-in" style="left: 0; right: 0; top: 266px; --d: .4s"><span class="b">${esc(t.formula[0])}</span> + <span class="r">${esc(t.formula[1])}</span> + <span class="b">${esc(t.formula[2])}</span> = <span class="r">${esc(t.formula[3])}</span></p>
         <svg class="st-heart st-in" viewBox="0 0 200 182" style="left: 102px; top: 308px; width: 156px; --d: .55s" aria-hidden="true">
           <defs><clipPath id="st-heart-${p.slug}"><path d="${HEART}"/></clipPath></defs>
-          <image href="/projects/${p.slug}/${cover.id}.jpg" width="200" height="182" preserveAspectRatio="xMidYMid slice" clip-path="url(#st-heart-${p.slug})"/>
+          <image href="/projects/${p.slug}/${cover.thumb ? 'w480/' : ''}${cover.id}.jpg" width="200" height="182" preserveAspectRatio="xMidYMid slice" clip-path="url(#st-heart-${p.slug})"/>
           <path class="st-ink-red" style="--d: .7s" pathLength="1" d="${HEART}"/>
         </svg>
         <p class="st-blue st-hand-big st-in" style="left: 22px; top: 322px; --rot: -9deg; --d: .8s">${esc(t.hello)}</p>
@@ -399,7 +418,8 @@ function storiesPlayer(p, slides, { bg } = {}) {
       <div class="st-canvas">${sl.html}
       </div>`}
     </section>`).join('\n');
-  const avatar = `${cover.modern ? `<source srcset="/projects/${p.slug}/${cover.id}.${cover.modern}" type="image/${cover.modern}">` : ''}<img src="/projects/${p.slug}/${cover.id}.jpg" alt="" width="40" height="40" loading="lazy" decoding="async">`;
+  const small = (ext) => `/projects/${p.slug}/${cover.thumb ? 'w480/' : ''}${cover.id}.${ext}`;
+  const avatar = `${cover.modern && cover.widths.includes(480) ? `<source srcset="${small(cover.modern)}" type="image/${cover.modern}">` : ''}<img src="${small('jpg')}" alt="" width="40" height="40" loading="lazy" decoding="async">`;
 
   return `
   <section class="stories" aria-label="История проекта ${esc(p.name)}" aria-roledescription="карусель"${bg ? ` style="--st-pic-bg: linear-gradient(${bg.join(', ')})"` : ''}>
@@ -440,7 +460,7 @@ function projectPage(p, next) {
     : '';
 
   const grid = p.photos
-    .map((ph, i) => pic(p.slug, ph, { alt: `${p.name} — ${p.seo}, фото ${i + 1}` }, '      '))
+    .map((ph, i) => pic(p.slug, ph, { alt: `${p.name} — ${p.seo}, фото ${i + 1}`, sizes: '(max-width: 900px) 50vw, 33vw' }, '      '))
     .join('\n');
 
   return `<!DOCTYPE html>
@@ -516,7 +536,7 @@ ${grid}
 
   <!-- NEXT PROJECT -->
   <a class="project-next" href="/projects/${next.slug}">
-${pic(next.slug, next.cover, { alt: `${next.name} — ${next.seo}`, cls: 'project-next-bg' }, '    ')}
+${pic(next.slug, next.cover, { alt: `${next.name} — ${next.seo}`, cls: 'project-next-bg', sizes: '100vw', cap: true }, '    ')}
     <span class="project-next-kicker">Следующий проект</span>
     <span class="project-next-title">${esc(next.name)}</span>
     <span class="project-next-link">Смотреть проект</span>
@@ -614,7 +634,7 @@ ${pic(next.slug, next.cover, { alt: `${next.name} — ${next.seo}`, cls: 'projec
 function galleryCard(p) {
   const meta = [p.city, `${p.photos.length} фото`].filter(Boolean).join(' · ');
   return `      <a class="archive-card" href="/projects/${p.slug}">
-${pic(p.slug, p.cover, { alt: `${p.name} — ${p.seo}` }, '        ')}
+${pic(p.slug, p.cover, { alt: `${p.name} — ${p.seo}`, sizes: '(max-width: 900px) 50vw, 25vw', cap: true }, '        ')}
         <div>
           <b>${esc(p.name)}</b>
           <span>${esc(meta)}</span>
