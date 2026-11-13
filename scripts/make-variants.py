@@ -10,6 +10,7 @@ For projects/<slug>/NN.jpg it writes
     projects/<slug>/w480/NN.<fmt>   grid on phones, cards, avatars
     projects/<slug>/w960/NN.<fmt>   grid on desktop, retina phones
     projects/<slug>/w480/NN.jpg     for places with no format fallback (SVG <image>, CSS blur)
+    projects/<slug>/w24/NN.jpg      a ~0.5 KB blurry preview, inlined as the placeholder
 where <fmt> is avif, or webp for projects whose AVIFs don't decode in Chrome (chic).
 Existing copies newer than their source are skipped, so re-runs are cheap.
 Needs Pillow with AVIF support (Pillow >= 11).
@@ -21,7 +22,7 @@ from PIL import Image, ImageOps, features
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WIDTHS = (480, 960)
 WEBP_ONLY = {'chic'}
-QUALITY = {'avif': {480: 52, 960: 58}, 'webp': {480: 74, 960: 78}, 'jpg': {480: 78}}
+QUALITY = {'avif': {480: 52, 960: 58}, 'webp': {480: 74, 960: 78}, 'jpg': {480: 78, 24: 45}}
 
 if not features.check('avif'):
     sys.exit('Pillow was built without AVIF support')
@@ -39,7 +40,7 @@ def save(im, dst, fmt, width):
     elif fmt == 'webp':
         im.save(dst, quality=q, method=6)
     else:
-        im.save(dst, quality=q, optimize=True, progressive=True)
+        im.save(dst, quality=q, optimize=True, progressive=width > 100)
 
 
 made = skipped = 0
@@ -54,7 +55,7 @@ for slug in sorted(os.listdir(projects)):
             continue
         src = os.path.join(folder, name)
         stem = name[:-4]
-        jobs = [(w, fmt) for w in WIDTHS] + [(480, 'jpg')]
+        jobs = [(w, fmt) for w in WIDTHS] + [(480, 'jpg'), (24, 'jpg')]
         jobs = [(w, f, os.path.join(folder, f'w{w}', f'{stem}.{f}')) for w, f in jobs]
         todo = [j for j in jobs if not fresh(j[2], src)]
         if not todo:

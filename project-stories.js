@@ -31,6 +31,14 @@
 
   let i = 0, elapsed = 0, last = 0, raf = 0;
   let onScreen = false, held = false, paused = still;   // reduced motion: no autoplay, taps only
+  let waiting = false;                                   // the active slide's photos are still on their way
+
+  // Photos load ahead of the viewer: the next few slides at once, the rest once the
+  // stories have been on screen for a moment
+  const imgsOf = (s) => [...s.querySelectorAll('img')];
+  const warm = (from, count = slides.length) => slides.slice(from, from + count)
+    .forEach((s) => imgsOf(s).forEach((img) => { if (img.loading === 'lazy') img.loading = 'eager'; }));
+  let warmedAll = false;
 
   function fit() {
     const w = frame.clientWidth, h = frame.clientHeight;
@@ -56,14 +64,29 @@
       s.setAttribute('aria-hidden', String(j !== i));
     });
     bars.forEach((b, j) => { b.style.transform = `scaleX(${j < i ? 1 : 0})`; });
-    // Fetch the next slide's photos now, so it never opens empty
-    const next = slides[i + 1];
-    if (next && root.offsetWidth) next.querySelectorAll('img[loading="lazy"]').forEach((img) => { img.loading = 'eager'; });
+    if (root.offsetWidth) warm(i, 4);
+    // A slide whose photos haven't arrived waits — entrance animations and the timer hold —
+    // and then opens whole instead of piece by piece. Never longer than 4 s.
+    const slide = slides[i], mine = i;
+    const pending = imgsOf(slide).filter((img) => !img.complete);
+    waiting = pending.length > 0;
+    slides.forEach((s) => s.classList.toggle('is-waiting', s === slide && waiting));
+    if (waiting) {
+      Promise.race([
+        Promise.all(pending.map((img) => (img.decode ? img.decode() : Promise.resolve()).catch(() => {}))),
+        new Promise((r) => setTimeout(r, 4000)),
+      ]).then(() => {
+        if (i !== mine) return;
+        waiting = false;
+        slide.classList.remove('is-waiting');
+        run();
+      });
+    }
     if (onScreen) track('story_slide_view', { slide: i + 1, slide_name: slides[i].dataset.name });
     if (i === slides.length - 1 && onScreen) track('story_complete');
   }
 
-  const playing = () => onScreen && !held && !paused && !document.hidden;
+  const playing = () => onScreen && !held && !paused && !waiting && !document.hidden;
 
   function tick(now) {
     raf = 0;
@@ -139,6 +162,7 @@
     const was = onScreen;
     onScreen = entry.intersectionRatio >= 0.6;
     if (onScreen && !was) track('story_slide_view', { slide: i + 1, slide_name: slides[i].dataset.name });
+    if (entry.isIntersecting && !warmedAll) { warmedAll = true; setTimeout(() => warm(0), 1500); }
     run();
   }, { threshold: [0, 0.6, 1] }).observe(frame);
   document.addEventListener('visibilitychange', run);

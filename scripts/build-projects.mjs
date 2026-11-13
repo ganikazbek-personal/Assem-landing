@@ -75,7 +75,9 @@ function photosOf(slug, format = 'avif') {
       const modern = fs.existsSync(path.join(dir, `${id}.${format}`)) ? format : null;
       const widths = modern ? VARIANTS.filter((v) => v < w && fs.existsSync(path.join(dir, `w${v}`, `${id}.${format}`))) : [];
       const thumb = fs.existsSync(path.join(dir, 'w480', `${id}.jpg`));
-      return { id, w, h, modern, widths, thumb };
+      const tiny = path.join(dir, 'w24', `${id}.jpg`);
+      const lqip = fs.existsSync(tiny) ? `data:image/jpeg;base64,${fs.readFileSync(tiny).toString('base64')}` : null;
+      return { id, w, h, modern, widths, thumb, lqip };
     });
 }
 
@@ -92,7 +94,8 @@ function pic(slug, ph, { alt, cls = '', eager = false, sizes = null, cap = false
   return [
     `<picture${cls ? ` class="${cls}"` : ''}>`,
     ph.modern && `  <source ${set} type="image/${ph.modern}">`,
-    `  <img src="${src}.jpg" alt="${esc(alt)}" width="${ph.w}" height="${ph.h}"${eager ? ' fetchpriority="high"' : ' loading="lazy"'} decoding="async">`,
+    // lazy photos show a blurry inline preview until they arrive
+    `  <img src="${src}.jpg" alt="${esc(alt)}" width="${ph.w}" height="${ph.h}"${eager ? ' fetchpriority="high"' : ' loading="lazy"'} decoding="async"${!eager && ph.lqip ? ` style="background: url(${ph.lqip}) 50% / cover no-repeat"` : ''}>`,
     '</picture>',
   ].filter(Boolean).map((line) => pad + line).join('\n');
 }

@@ -27,6 +27,17 @@
   layout();
   addEventListener('resize', layout);
 
+  /* LOOK-AHEAD — start photos about two screens before they scroll in. Safari's own
+     lazy loading starts late, so a quick scroll on an iPhone outran it. */
+  if ('IntersectionObserver' in window) {
+    const ahead = new IntersectionObserver((entries) => entries.forEach((e) => {
+      if (!e.isIntersecting) return;
+      e.target.loading = 'eager';
+      ahead.unobserve(e.target);
+    }), { rootMargin: '1600px 0px' });
+    imgs.forEach((img) => ahead.observe(img));
+  }
+
   /* LIGHTBOX */
   const lb        = document.getElementById('lb');
   const lbImg     = document.getElementById('lb-img');
