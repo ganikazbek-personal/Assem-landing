@@ -59,6 +59,11 @@ function jpegSize(file) {
   throw new Error(`No JPEG size in ${file}`);
 }
 
+// DRAWN_STORIES=1 builds the drawn (HTML) stories even where pictures exist — the source
+// scripts/render-stories.mjs turns into those pictures
+const DRAWN = Boolean(process.env.DRAWN_STORIES);
+const drawnStories = (p) => !p.story.images || (DRAWN && Boolean(p.story.zones));
+
 // Widths of the smaller copies made by scripts/make-variants.py
 const VARIANTS = [480, 960];
 
@@ -395,7 +400,7 @@ function phoneStories(p) {
   return `
   <!-- STORY: Instagram-style stories, phones only -->
   <div id="story">
-${p.story.images ? imageStories(p) : storiesSection(p)}
+${drawnStories(p) ? storiesSection(p) : imageStories(p)}
   </div>
 `;
 }
@@ -408,8 +413,12 @@ function imageStories(p) {
     const { w, h } = jpegSize(file);
     const src = '/' + path.relative(ROOT, file).slice(0, -4);
     const avif = fs.existsSync(`${file.slice(0, -4)}.avif`);
+    const tiny = path.join(path.dirname(file), 'w24', path.basename(file));
+    const blur = fs.existsSync(tiny) ? ` style="background: url(data:image/jpeg;base64,${fs.readFileSync(tiny).toString('base64')}) 50% / cover no-repeat"` : '';
+    // tappable spots over buttons that are part of the picture
+    const links = (sl.links || []).map((l) => `<a class="st-hotspot" href="${esc(l.href)}" aria-label="${esc(l.label)}" style="--x: ${l.x}; --y: ${l.y}; --w: ${l.w}; --h: ${l.h}"></a>`).join('');
     return { name: sl.name, dur: sl.dur || 7, raw: true, cls: 'st-pic-slide', html: `
-      <picture>${avif ? `<source srcset="${src}.avif" type="image/avif">` : ''}<img src="${src}.jpg" alt="${esc(sl.alt)}" width="${w}" height="${h}" loading="lazy" decoding="async"></picture>` };
+      <picture>${avif ? `<source srcset="${src}.avif" type="image/avif">` : ''}<img src="${src}.jpg" alt="${esc(sl.alt)}" width="${w}" height="${h}" loading="lazy" decoding="async"${blur}></picture>${links}` };
   });
   return storiesPlayer(p, slides, { bg: s.bg });
 }
@@ -453,7 +462,7 @@ function projectPage(p, next) {
   const title = `${p.name} — ${p.seo} | Assem Danakhmet`;
   const desc  = `${p.name} — ${p.seo}. ${p.photos.length} фото проекта от дизайнера интерьеров Assem Danakhmet: яркие современные интерьеры с характером.`;
   const label = [p.kind, p.city].filter(Boolean).join(' · ') || 'Дизайн интерьера';
-  const zones  = p.story && !p.story.images;  // drawn phone stories (Caveat)
+  const zones  = p.story && drawnStories(p);  // drawn phone stories (Caveat)
   const scroll = zones && p.scroll;          // + the desktop scroll story
 
   const facts = p.facts && p.facts.length

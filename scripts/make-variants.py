@@ -69,4 +69,20 @@ for slug in sorted(os.listdir(projects)):
             save(small, dst, f, w)
             made += 1
 
+# Stories pictures (projects/<slug>/stories/NN.jpg) only need the blurry preview
+for folder in sorted(os.path.join(projects, s, 'stories') for s in os.listdir(projects)):
+    if not os.path.isdir(folder):
+        continue
+    for name in sorted(os.listdir(folder)):
+        if not (name.endswith('.jpg') and name[:-4].isdigit()):
+            continue
+        src = os.path.join(folder, name)
+        dst = os.path.join(folder, 'w24', name)
+        if fresh(dst, src):
+            skipped += 1
+            continue
+        im = ImageOps.exif_transpose(Image.open(src)).convert('RGB')
+        save(im.resize((24, round(im.height * 24 / im.width)), Image.LANCZOS), dst, 'jpg', 24)
+        made += 1
+
 print(f'{made} copies written, {skipped} up to date')

@@ -388,6 +388,19 @@
 .stories:not(.is-live) .st-pic-slide { height: auto; }
 /* Playing: the picture keeps 9:16 and clears the reply bar; its empty paper on top may
    slip under the progress bars */
+/* Tappable spots over buttons baked into a picture (fractions of the picture) */
+.st-hotspot { display: none; }
+.stories.is-live .st-hotspot {
+  display: block;
+  position: absolute;
+  z-index: 2;
+  left: calc(50% - var(--pw) / 2 + var(--pw) * var(--x));
+  top: calc(var(--pt) + var(--ph) * var(--y));
+  width: calc(var(--pw) * var(--w));
+  height: calc(var(--ph) * var(--h));
+  border-radius: 14px;
+}
+.stories.is-live .st-hotspot:focus-visible { outline: 2px solid #c24d3c; outline-offset: 2px; }
 .stories.is-live .st-pic-slide img {
   position: absolute;
   left: 50%;
