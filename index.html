@@ -126,7 +126,7 @@
       <a href="#work">Как я работаю</a>
       <a href="#services">Услуги</a>
     </div>
-    <a class="nav-btn" href="#contact">Узнать цену</a>
+    <a class="nav-btn" href="/price">Узнать цену</a>
     <button class="nav-hamburger" aria-label="Открыть меню">
       <span></span>
       <span></span>
@@ -141,7 +141,7 @@
     <a href="#portfolio">Портфолио</a>
     <a href="#work">Как я работаю</a>
     <a href="#services">Услуги</a>
-    <a href="#contact" class="drawer-cta">Узнать цену</a>
+    <a href="/price" class="drawer-cta">Узнать цену</a>
   </div>
 
   <!-- HERO -->
@@ -236,7 +236,7 @@
         <span class="h1-line">пространства</span>
       </h1>
       <p class="hero-sub">Интерьеры, в которых хочется жить</p>
-      <a class="main-btn" href="#contact">Узнать цену</a>
+      <a class="main-btn" href="/price">Узнать цену</a>
     </div>
   </section>
 
@@ -302,7 +302,7 @@
 
 
 <div class="project-archive">
-      <a class="archive-card" href="/gallery#amore">
+      <a class="archive-card" href="/projects/amore">
         <picture>
           <source srcset="projects/amore/05.avif" type="image/avif">
           <img src="projects/amore/05.jpg" alt="Amore — дизайн квартиры с синими акцентами, Астана" loading="lazy" decoding="async">
@@ -312,7 +312,7 @@
           <span>Астана</span>
         </div>
       </a>
-      <a class="archive-card" href="/gallery#eclat">
+      <a class="archive-card" href="/projects/eclat">
         <picture>
           <source srcset="projects/eclat/01.avif" type="image/avif">
           <img src="projects/eclat/01.jpg" alt="Éclat — дизайн интерьера квартиры, Астана" loading="lazy" decoding="async">
@@ -322,7 +322,7 @@
           <span>Астана</span>
         </div>
       </a>
-      <a class="archive-card" href="/gallery#olive">
+      <a class="archive-card" href="/projects/olive">
         <picture>
           <source srcset="projects/olive/01.avif" type="image/avif">
           <img src="projects/olive/01.jpg" alt="Olive — современный дизайн интерьера, Астана" loading="lazy" decoding="async">
@@ -332,7 +332,7 @@
           <span>Астана</span>
         </div>
       </a>
-      <a class="archive-card" href="/gallery#bluebby">
+      <a class="archive-card" href="/projects/bluebby">
         <picture>
           <source srcset="projects/bluebby/01.avif" type="image/avif">
           <img src="projects/bluebby/01.jpg" alt="Bluebby — дизайн интерьера квартиры, Астана" loading="lazy" decoding="async">
@@ -342,7 +342,7 @@
           <span>Астана</span>
         </div>
       </a>
-      <a class="archive-card" href="/gallery#medvedevo">
+      <a class="archive-card" href="/projects/medvedevo">
         <picture>
           <source srcset="projects/medvedevo/01.avif" type="image/avif">
           <img src="projects/medvedevo/01.jpg" alt="Medvedevo — дизайн интерьера загородного дома, Москва" loading="lazy" decoding="async">
@@ -356,7 +356,7 @@
 
     <div class="portfolio-actions">
       <a class="portfolio-btn" href="/gallery">Смотреть все проекты</a>
-      <a class="portfolio-btn secondary" href="#contact">Хочу так же!</a>
+      <a class="portfolio-btn secondary" href="/price">Хочу так же!</a>
     </div>
   </section>
 
@@ -500,7 +500,7 @@
 
   <!-- STICKY MOBILE CTA -->
   <div class="sticky-cta" id="sticky-cta" aria-hidden="true">
-    <a href="#contact">Узнать цену</a>
+    <a href="/price">Узнать цену</a>
   </div>
 
   <script src="script.js" defer></script>
@@ -535,14 +535,16 @@
           ph('contact_click', { channel: 'instagram', placement: 'socials' });
         } else if (href.includes('t.me')) {
           ph('contact_click', { channel: 'telegram', placement: 'socials' });
-        } else if (href.endsWith('#contact')) {
+        } else if (href.endsWith('#contact') || href === '/price') {
           const placement =
             a.classList.contains('main-btn')    ? 'hero' :
             a.classList.contains('nav-btn')     ? 'nav' :
             a.classList.contains('drawer-cta')  ? 'mobile_menu' :
             a.closest('#sticky-cta')            ? 'sticky' :
             a.classList.contains('portfolio-btn') ? 'portfolio' : 'other';
-          ph('scroll_to_contact', { placement });
+          ph(href === '/price' ? 'price_open' : 'scroll_to_contact', { placement });
+        } else if (href.startsWith('/projects/')) {
+          ph('project_open', { project: href.split('/')[2], placement: 'home' });
         } else if (href.startsWith('/gallery')) {
           ph('gallery_open', { project: href.includes('#') ? href.split('#')[1] : 'all' });
         } else if (href.includes('#')) {

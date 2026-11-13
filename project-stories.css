@@ -1,0 +1,387 @@
+/* =========================================
+   PHONE STORIES — the project story as Instagram-style slides
+   Markup: scripts/build-projects.mjs (storiesSection, imageStorySection). Player: project-stories.js.
+   A drawn slide sits on a 360×600 canvas scaled to the screen with --k; a picture slide
+   (.st-pic-slide) is one of Assem's 9:16 stories, sized with --pw / --ph / --pt.
+   The look follows Assem's own stories: paper, handwriting, polaroids, arrows.
+   ========================================= */
+/* Phones only: there they replace the scroll story; desktop shows the scroll story, or
+   nothing for a project whose story is just stories */
+.stories { display: none; }
+@media (max-width: 900px) {
+  #story > .story { display: none; }
+  .stories { display: block; }
+}
+
+.stories {
+  --st-paper: #e9e6e2;
+  --st-red:   #b0503c;
+  --st-blue:  #4d6790;
+  --st-ink:   #3d3833;
+  --hand: 'Caveat', 'Marck Script', cursive;
+  position: relative;
+  background: var(--st-paper);
+  color: var(--st-ink);
+  font-family: var(--sans);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.st-frame {
+  position: relative;
+  max-width: 520px;
+  margin: 0 auto;
+  background:
+    radial-gradient(120% 70% at 50% 40%, rgba(255, 255, 255, .5), transparent 70%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .27 0 0 0 0 .22 0 0 0 .06 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E"),
+    var(--st-paper);
+}
+
+/* ---------- Slides ---------- */
+.st-slide { position: relative; height: 640px; overflow: hidden; }
+
+.st-canvas {
+  position: absolute;
+  left: 50%;
+  top: var(--cy, 50%);
+  width: 360px;
+  height: 600px;
+  margin: -300px 0 0 -180px;
+  transform: scale(var(--k, 1));
+}
+.st-canvas > * { position: absolute; margin: 0; }
+
+/* Soft white paper patches behind the content */
+.st-blob {
+  background: #fff;
+  opacity: .78;
+  border-radius: 46% 54% 44% 56% / 55% 42% 58% 45%;
+  filter: blur(9px);
+}
+
+/* Handwriting */
+.st-title,
+.st-step,
+.st-sign,
+.st-blue,
+.st-red,
+.st-dark,
+.st-formula,
+.st-notes,
+.st-more,
+.st-cta,
+.st-plan-labels,
+.st-table { font-family: var(--hand); }
+
+.st-title { color: var(--st-red); font-weight: 700; line-height: .95; letter-spacing: -.01em; }
+.st-step  { color: #8a8a96; font-size: 26px; font-weight: 500; }
+.st-sign  { color: #8a8a96; font-size: 19px; font-weight: 500; }
+.st-blue  { color: var(--st-blue); font-size: 23px; font-weight: 600; line-height: 1.1; }
+.st-red   { color: var(--st-red); font-size: 22px; font-weight: 600; line-height: 1.1; }
+.st-dark  { color: var(--st-ink); font-size: 20px; font-weight: 500; line-height: 1.15; }
+.st-hand-big { font-size: 40px; font-weight: 700; }
+.st-hand-mid { font-size: 28px; }
+.st-hand-sm  { font-size: 24px; margin: 10px 0 2px; }
+.st-hand-sm:first-child { margin-top: 0; }
+.st-zone-text { font-size: 23px; line-height: 1.1; }
+.st-head-block > * { position: static; margin: 0; }
+
+.st-formula { font-size: 25px; font-weight: 600; text-align: center; color: var(--st-ink); }
+.st-formula .b { color: var(--st-blue); }
+.st-formula .r { color: var(--st-red); }
+
+/* Polaroids */
+.st-polaroid {
+  padding: 8px;
+  background: #fff;
+  box-shadow: 0 10px 22px rgba(40, 30, 20, .2), 0 1px 3px rgba(40, 30, 20, .12);
+  rotate: var(--rot, 0deg);
+}
+.st-photo { position: relative; overflow: hidden; }
+.st-photo picture { display: block; width: 100%; height: 100%; }
+.st-photo img { width: 100%; height: 100%; object-fit: cover; }
+.st-pin {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  margin: -12px 0 0 -12px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: var(--st-red);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .35);
+  font: 700 13px/20px var(--sans);
+  font-style: normal;
+  text-align: center;
+  color: #fff;
+}
+
+/* Numbered notes under the main photo */
+.st-notes { padding: 0; list-style: none; }
+.st-notes li {
+  position: relative;
+  padding-left: 32px;
+  margin-bottom: 7px;
+  font-size: 20px;
+  line-height: 1.08;
+  color: var(--st-ink);
+}
+.st-notes i {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--st-red);
+  font: 700 12px/22px var(--sans);
+  font-style: normal;
+  text-align: center;
+  color: #fff;
+}
+.st-notes b { color: var(--st-red); font-weight: 700; }
+
+/* Paper cards: plan and room schedule */
+.st-card {
+  padding: 8px;
+  background: #fff;
+  box-shadow: 0 10px 22px rgba(40, 30, 20, .18), 0 1px 3px rgba(40, 30, 20, .1);
+  rotate: var(--rot, 0deg);
+}
+.st-plan img { display: block; width: 100%; height: auto; }
+.st-plan-labels { position: absolute; inset: 8px; pointer-events: none; }
+.st-plan-labels span {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  padding: 0 3px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, .82);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--st-red);
+  white-space: nowrap;
+}
+.st-table { padding: 10px 14px 8px; }
+.st-table figcaption { margin-bottom: 4px; font-size: 21px; font-weight: 700; text-align: center; color: var(--st-ink); }
+.st-table > div { display: grid; grid-template-columns: 1fr 1fr; column-gap: 18px; }
+.st-table dl { margin: 0; }
+.st-table dl div { display: flex; justify-content: space-between; gap: 6px; border-bottom: 1px dashed rgba(61, 56, 51, .2); font-size: 18px; line-height: 1.25; }
+.st-table dt { color: var(--st-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.st-table dd { margin: 0; color: var(--st-blue); font-weight: 700; }
+
+/* Heart with the cover photo */
+.st-heart { height: auto; overflow: visible; }
+
+/* Hand-drawn strokes */
+.st-arrows { left: 0; top: 0; width: 360px; height: 600px; overflow: visible; pointer-events: none; }
+.st-ink-red,
+.st-ink-blue {
+  fill: none;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+}
+.st-ink-red  { stroke: var(--st-red); }
+.st-ink-blue { stroke: var(--st-blue); }
+.st-heart .st-ink-red { stroke-width: 4; }
+
+/* Calls to action on the last slide */
+.st-cta {
+  display: block;
+  padding: 10px 0 12px;
+  border-radius: 999px;
+  background: var(--st-red);
+  box-shadow: 0 10px 22px rgba(176, 80, 60, .32);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  color: #fff;
+}
+.st-more { display: block; font-size: 24px; font-weight: 600; text-align: center; color: var(--st-blue); text-decoration: underline; text-underline-offset: 4px; }
+
+/* ---------- Entrances, replayed every time a slide opens ---------- */
+.st-in { rotate: var(--rot, 0deg); }
+.stories.is-live .st-slide.is-active .st-in { animation: st-in .55s cubic-bezier(.2, .7, .3, 1) var(--d, 0s) both; }
+.stories.is-live .st-slide.is-active .st-pin { animation: st-pop .45s cubic-bezier(.3, 1.6, .5, 1) var(--d, 0s) both; }
+.stories.is-live .st-slide.is-active .st-ink-red,
+.stories.is-live .st-slide.is-active .st-ink-blue { animation: st-draw .7s ease-out var(--d, 0s) forwards; }
+.stories.is-live .st-slide:not(.is-active) .st-ink-red,
+.stories.is-live .st-slide:not(.is-active) .st-ink-blue { stroke-dashoffset: 1; }
+.stories:not(.is-live) .st-ink-red,
+.stories:not(.is-live) .st-ink-blue { stroke-dashoffset: 0; }
+
+@keyframes st-in  { from { opacity: 0; translate: 0 14px; } to { opacity: 1; translate: 0 0; } }
+@keyframes st-pop { from { opacity: 0; scale: .3; } to { opacity: 1; scale: 1; } }
+@keyframes st-draw { to { stroke-dashoffset: 0; } }
+
+/* ---------- Player ---------- */
+.stories.is-live .st-frame {
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  touch-action: pan-y;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.stories.is-live .st-slide {
+  position: absolute;
+  inset: 0;
+  height: auto;
+  visibility: hidden;
+}
+.stories.is-live .st-slide.is-active { visibility: visible; }
+.stories.is-live img { pointer-events: none; -webkit-user-drag: none; }
+
+.st-top,
+.st-bottom,
+.st-nav { display: none; }
+
+.stories.is-live .st-top {
+  display: block;
+  position: absolute;
+  z-index: 5;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 10px 10px 18px;
+  padding-bottom: 30px;
+  background: linear-gradient(rgba(42, 37, 33, .55), rgba(42, 37, 33, .22) 60%, rgba(42, 37, 33, 0));
+  color: #fff;
+}
+.st-bars { display: flex; gap: 3px; }
+.st-bars i {
+  flex: 1;
+  height: 2.5px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, .45);
+  overflow: hidden;
+}
+.st-bars s {
+  display: block;
+  height: 100%;
+  background: #fff;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.st-head { display: flex; align-items: center; gap: 10px; margin-top: 10px; padding: 0 4px; }
+.st-avatar {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  padding: 2px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #f9ce34, #ee2a7b, #6228d7);
+}
+.st-avatar img { width: 100%; height: 100%; border: 2px solid #fff; border-radius: 50%; object-fit: cover; }
+.st-head p { flex: 1; margin: 0; line-height: 1.15; text-shadow: 0 1px 4px rgba(0, 0, 0, .25); }
+.st-head b { display: block; font-size: 15px; font-weight: 600; }
+.st-head span { font-size: 12.5px; opacity: .9; }
+.st-pause {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  padding: 9px;
+  border: 0;
+  background: none;
+  color: #fff;
+  cursor: pointer;
+}
+.st-pause svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 1px 3px rgba(0, 0, 0, .3)); }
+.st-i-play { display: none; fill: currentColor; }
+.stories.is-paused .st-i-pause { display: none; }
+.stories.is-paused .st-i-play { display: block; }
+
+.stories.is-live .st-bottom {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: absolute;
+  z-index: 5;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 18px 10px calc(12px + env(safe-area-inset-bottom));
+  padding-top: 30px;
+  background: linear-gradient(rgba(42, 37, 33, 0), rgba(42, 37, 33, .2) 40%, rgba(42, 37, 33, .5));
+}
+.st-reply {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 18px;
+  border: 1.5px solid rgba(255, 255, 255, .85);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, .06);
+  color: #fff;
+  font-size: 15px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, .25);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.st-like,
+.st-share {
+  flex: none;
+  width: 46px;
+  height: 46px;
+  padding: 10px;
+  border: 0;
+  background: none;
+  color: #fff;
+  cursor: pointer;
+}
+.st-like svg,
+.st-share svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linejoin: round; stroke-linecap: round; filter: drop-shadow(0 1px 3px rgba(0, 0, 0, .3)); }
+.st-like[aria-pressed="true"] { color: #ff3040; }
+.st-like[aria-pressed="true"] svg { fill: currentColor; animation: st-pop .4s cubic-bezier(.3, 1.6, .5, 1); }
+.st-share[data-copied]::after {
+  content: "Ссылка скопирована";
+  position: absolute;
+  right: 8px;
+  bottom: calc(100% - 6px);
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, .78);
+  font-size: 12px;
+  color: #fff;
+  white-space: nowrap;
+}
+
+/* Keyboard and screen readers: real buttons, invisible */
+.stories.is-live .st-nav {
+  display: block;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* Holding a finger down hides the chrome, like Instagram */
+.stories.is-held .st-top,
+.stories.is-held .st-bottom { opacity: 0; transition: opacity .2s; }
+
+/* ---------- Picture slides: Assem's own stories, shown whole ---------- */
+.st-pic-slide { background: var(--st-pic-bg, var(--st-paper)); }
+.st-pic-slide img { display: block; width: min(100%, 420px); height: auto; margin: 0 auto; }
+.stories:not(.is-live) .st-pic-slide { height: auto; }
+/* Playing: the picture keeps 9:16 and clears the reply bar; its empty paper on top may
+   slip under the progress bars */
+.stories.is-live .st-pic-slide img {
+  position: absolute;
+  left: 50%;
+  top: var(--pt, 0);
+  width: var(--pw, 100%);
+  height: var(--ph, auto);
+  margin: 0;
+  transform: translateX(-50%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stories.is-live .st-slide.is-active .st-in,
+  .stories.is-live .st-slide.is-active .st-pin { animation: none; }
+  .stories.is-live .st-ink-red,
+  .stories.is-live .st-ink-blue { animation: none !important; stroke-dashoffset: 0 !important; }
+}

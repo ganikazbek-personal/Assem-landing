@@ -3,32 +3,36 @@
    ========================================= */
 const hamburger = document.querySelector('.nav-hamburger');
 const drawer    = document.getElementById('nav-drawer');
-const drawerClose = drawer.querySelector('.nav-drawer-close');
-const drawerLinks = drawer.querySelectorAll('a');
 
-hamburger.addEventListener('click', () => {
-  drawer.classList.add('open');
-  document.body.style.overflow = 'hidden';
-  drawerClose.focus();
-});
+// Project pages have no site nav
+if (hamburger && drawer) {
+  const drawerClose = drawer.querySelector('.nav-drawer-close');
+  const drawerLinks = drawer.querySelectorAll('a');
 
-function closeDrawer() {
-  drawer.classList.remove('open');
-  document.body.style.overflow = '';
+  hamburger.addEventListener('click', () => {
+    drawer.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    drawerClose.focus();
+  });
+
+  const closeDrawer = () => {
+    drawer.classList.remove('open');
+    document.body.style.overflow = '';
+  };
+
+  drawerClose.addEventListener('click', closeDrawer);
+  drawerLinks.forEach(link => link.addEventListener('click', closeDrawer));
+
+  // Close on backdrop click
+  drawer.addEventListener('click', (e) => {
+    if (e.target === drawer) closeDrawer();
+  });
+
+  // Close on Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && drawer.classList.contains('open')) closeDrawer();
+  });
 }
-
-drawerClose.addEventListener('click', closeDrawer);
-drawerLinks.forEach(link => link.addEventListener('click', closeDrawer));
-
-// Close on backdrop click
-drawer.addEventListener('click', (e) => {
-  if (e.target === drawer) closeDrawer();
-});
-
-// Close on Escape
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && drawer.classList.contains('open')) closeDrawer();
-});
 
 /* =========================================
    SCROLL REVEAL

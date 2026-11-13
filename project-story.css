@@ -1,0 +1,425 @@
+/* =========================================
+   SCROLL STORY (desktop) — the whole plan; each zone opens into full-height renders
+   with numbered notes pinned on the photo and listed in the side panel.
+   Markup comes from scripts/build-projects.mjs (storySection), motion from
+   project-story.js. Without that script (or with reduced motion) the story
+   is a plain list: the plan, then every zone with its text and photos.
+   ========================================= */
+.story {
+  --story-paper:  #f1ece2;
+  --story-panel:  #f6f2ea;
+  --story-ink:    #1d1b18;
+  --story-pencil: #8d877c;
+  --story-wall:   #3a3631;
+  --story-accent: #e8642c;
+  --story-mono:   'IBM Plex Mono', ui-monospace, Menlo, monospace;
+  position: relative;
+  background: var(--story-paper);
+  color: var(--story-ink);
+  font-family: var(--sans);
+}
+
+/* Paper grain under everything */
+.story-stage {
+  position: relative;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .3 0 0 0 0 .22 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* The drawing */
+.pl-ink  { fill: none; stroke: var(--story-ink); stroke-width: .55; }
+.pl-line { fill: none; stroke: var(--story-pencil); stroke-width: .4; }
+.pl-wall { fill: var(--story-wall); }
+.pl-wall.pl-edge { stroke: var(--story-wall); stroke-width: .3; }
+.pl-mask { fill: var(--story-paper); }
+.pl-soft { fill: #e6dfd2; }
+
+.story-shape,
+.story-mini-zone {
+  fill: var(--story-accent);
+  fill-opacity: 0;
+  stroke: var(--story-accent);
+  stroke-opacity: 0;
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Labels keep one on-screen size: --px is plan units per screen pixel */
+.story-label text {
+  font-family: var(--story-mono);
+  text-anchor: middle;
+  fill: var(--story-ink);
+  paint-order: stroke;
+  stroke: var(--story-paper);
+  stroke-width: calc(var(--px, 1) * 4px);
+  stroke-linejoin: round;
+}
+.story-label-name { font-size: calc(var(--px, 1) * 11px); font-weight: 500; letter-spacing: .14em; }
+.story-label-area { font-size: calc(var(--px, 1) * 8.5px); letter-spacing: .06em; }
+.story-label.is-active .story-label-name { fill: var(--story-accent); }
+
+/* Words */
+.story-kicker {
+  margin: 0 0 14px;
+  font-family: var(--story-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--story-accent);
+}
+.story-copy h2,
+.story-copy h3 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 48px;
+  font-weight: 400;
+  line-height: 1.05;
+}
+.story-text {
+  margin: 16px 0 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #3a3631;
+}
+.story-outro a {
+  display: inline-block;
+  margin-top: 24px;
+  padding: 13px 28px;
+  border: 1px solid var(--story-ink);
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  transition: background .2s, color .2s;
+}
+.story-outro a:hover { background: var(--story-ink); color: var(--story-paper); }
+
+/* Numbered notes in the panel */
+.story-list {
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: note;
+}
+.story-list li {
+  position: relative;
+  padding: 12px 0 12px 44px;
+  border-top: 1px solid rgba(29, 27, 24, .12);
+  counter-increment: note;
+  transition: opacity .25s;
+}
+.story-list li::before {
+  content: counter(note);
+  position: absolute;
+  left: 0;
+  top: 11px;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--story-accent);
+  border-radius: 50%;
+  font-family: var(--story-mono);
+  font-size: 12px;
+  line-height: 25px;
+  text-align: center;
+  color: var(--story-accent);
+  transition: background .25s, color .25s;
+}
+.story-list li.is-active::before { background: var(--story-accent); color: #fff; }
+.story-list b { display: block; font-size: 15px; font-weight: 600; }
+.story-list span { display: block; margin-top: 2px; font-size: 14px; line-height: 1.45; color: #5a544b; }
+
+.story-specs { margin: 22px 0 0; }
+.story-specs div {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid rgba(29, 27, 24, .12);
+}
+.story-specs dt {
+  padding-top: 2px;
+  font-family: var(--story-mono);
+  font-size: 10.5px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #7a746a;
+}
+.story-specs dd { margin: 0; font-size: 14px; line-height: 1.45; }
+
+/* Pins on the photo: a numbered dot, and while it is the one being read, its label */
+.story-pin {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+.story-pin i {
+  position: absolute;
+  left: -15px;
+  top: -15px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--story-accent);
+  box-shadow: 0 0 0 5px rgba(232, 100, 44, .28), 0 4px 14px rgba(0, 0, 0, .35);
+  font: 500 13px/30px var(--story-mono);
+  font-style: normal;
+  text-align: center;
+  color: #fff;
+}
+.story-pin.is-active i::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 2px solid var(--story-accent);
+  animation: story-ping 1.6s ease-out infinite;
+}
+@keyframes story-ping {
+  from { transform: scale(1); opacity: .9; }
+  to   { transform: scale(2.1); opacity: 0; }
+}
+.story-pin span {
+  position: absolute;
+  top: 0;
+  left: 44px;
+  width: max-content;
+  max-width: 250px;
+  padding: 10px 14px 11px;
+  border-radius: 4px;
+  background: rgba(20, 17, 13, .8);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: rgba(255, 255, 255, .85);
+  font-size: 13px;
+  line-height: 1.4;
+  transform: translate(-8px, -50%);
+  opacity: 0;
+  transition: opacity .3s, transform .3s;
+  pointer-events: none;
+}
+.story-pin span::before {                          /* leader from the dot */
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  width: 24px;
+  height: 1px;
+  background: rgba(255, 255, 255, .75);
+}
+.story-pin span b { display: block; margin-bottom: 2px; font-size: 14px; font-weight: 600; color: #fff; }
+.story-pin[data-side="left"] span { left: auto; right: 44px; transform: translate(8px, -50%); }
+.story-pin[data-side="left"] span::before { right: auto; left: 100%; }
+.story-pin.is-active span { opacity: 1; transform: translate(0, -50%); }
+
+.story-panel,
+.story-mini,
+.story-blurs,
+.story-pins,
+.story-hud { display: none; }
+
+/* ---------- Plain list (no JS / reduced motion) ---------- */
+.story:not(.is-live) .story-stage { padding: 72px 48px 88px; }
+.story:not(.is-live) .story-intro { max-width: 640px; margin: 0 auto 32px; text-align: center; }
+.story:not(.is-live) .story-plan svg { display: block; width: 100%; max-width: 1000px; height: auto; margin: 0 auto; }
+.story:not(.is-live) .story-shape { fill-opacity: .06; stroke-opacity: .5; }
+.story:not(.is-live) .story-list { display: none; }
+.story:not(.is-live) .story-zone {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  grid-template-areas: "copy frame";
+  gap: 40px;
+  align-items: start;
+  max-width: 1200px;
+  margin: 72px auto 0;
+}
+.story:not(.is-live) .story-copy { grid-area: copy; }
+.story:not(.is-live) .story-frame {
+  grid-area: frame;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  align-items: start;
+}
+.story:not(.is-live) .story-frame picture { display: block; }   /* or each <source> takes a grid cell */
+.story:not(.is-live) .story-frame img { width: 100%; height: auto; }
+.story:not(.is-live) .story-outro { max-width: 640px; margin: 72px auto 0; text-align: center; }
+
+/* ---------- Scroll mode ----------
+   project-story.js sets --view-w / --view-h (the picture area) and --panel-w */
+.story.is-live { height: calc(var(--story-length, 26) * 100vh); height: calc(var(--story-length, 26) * 100svh); }
+
+.story.is-live .story-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.story.is-live .story-panel {
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: var(--panel-w);
+  background: var(--story-panel);
+  border-left: 1px solid rgba(29, 27, 24, .1);
+}
+
+.story.is-live .story-plan { position: absolute; }          /* box set by project-story.js */
+.story.is-live .story-plan svg { display: block; width: 100%; height: 100%; }
+.story.is-live .pl-ink,
+.story.is-live .pl-line {
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: calc(1 - var(--draw, 1));
+}
+.story.is-live.is-drawn .pl-ink,
+.story.is-live.is-drawn .pl-line { stroke-dasharray: none; }
+.story.is-live .pl-wall,
+.story.is-live .pl-soft { opacity: var(--draw, 1); }
+
+.story.is-live .story-mini {
+  display: block;
+  position: absolute;
+  right: 40px;
+  bottom: 64px;
+  width: calc(var(--panel-w) - 80px);
+  max-width: 240px;
+  height: auto;
+  opacity: 0;
+}
+.story.is-live .story-mini .pl-ink,
+.story.is-live .story-mini .pl-line { stroke-dasharray: none; }
+.story-mini-zone.is-active { fill-opacity: .25; stroke-opacity: 1; }
+
+.story.is-live .story-zone {
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.story.is-live .story-zone.is-on { visibility: visible; }
+
+/* Blurred copy of the photo fills the picture area behind it */
+.story.is-live .story-blurs {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--view-w);
+  height: var(--view-h);
+  overflow: hidden;
+  background: #1b1814;
+  opacity: 0;
+}
+.story-blur {
+  position: absolute;
+  inset: -40px;
+  background-size: cover;
+  background-position: center;
+  filter: blur(34px) brightness(.5) saturate(1.1);
+  opacity: 0;
+}
+
+/* The photo itself, whole and full height */
+.story.is-live .story-frame {
+  position: absolute;
+  overflow: visible;
+}
+.story.is-live .story-frame img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+}
+.story.is-live .story-pins {
+  display: block;
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+}
+.story.is-live .story-zone.is-on .story-pins.is-on { visibility: visible; }
+
+/* Panel copy: intro, each zone, outro */
+.story.is-live .story-copy {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: var(--panel-w);
+  max-height: calc(100% - 250px);
+  overflow: auto;
+  padding: 72px 40px 0;
+  opacity: 0;
+  pointer-events: none;
+  scrollbar-width: none;
+}
+.story.is-live .story-outro { pointer-events: auto; }
+.story.is-live .story-list li { opacity: .3; }
+.story.is-live .story-list li.is-seen { opacity: .6; }
+.story.is-live .story-list li.is-active { opacity: 1; }
+.story.is-live .story-copy .story-list,
+.story.is-live .story-copy .story-specs { display: none; }
+.story.is-live .story-copy .story-list.is-on,
+.story.is-live .story-copy.show-specs .story-specs { display: block; }
+
+/* HUD over the picture area */
+.story.is-live .story-hud {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--view-w);
+  height: var(--view-h);
+  z-index: 4;
+  pointer-events: none;
+  font-family: var(--story-mono);
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  transition: color .3s;
+}
+.story-hud > span { position: absolute; }
+.story-hud-tl { top: 24px; left: 32px; }
+.story-hud-tr { top: 24px; right: 32px; }
+.story-hud-count { left: 32px; bottom: 34px; }
+.story-hud-count b { font-weight: 500; color: var(--story-accent); }
+.story-hint {
+  left: 50%;
+  bottom: 34px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  transition: opacity .3s;
+}
+.story-ruler {
+  position: absolute;
+  left: 32px;
+  right: 32px;
+  bottom: 18px;
+  height: 6px;
+  border-bottom: 1px solid currentColor;
+  background: repeating-linear-gradient(90deg, currentColor 0 1px, transparent 1px 2%) bottom / 100% 5px no-repeat;
+  opacity: .45;
+}
+.story-ruler i {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  height: 2px;
+  width: calc(var(--progress, 0) * 100%);
+  background: var(--story-accent);
+}
+.story.is-live.is-covered .story-hud { color: #fff; text-shadow: 0 1px 8px rgba(0, 0, 0, .45); }
+
+/* Phones and narrow windows get project-stories.css instead */
+@media (max-width: 900px) {
+  .story { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .story-pin.is-active i::after { animation: none; }
+}
