@@ -117,7 +117,7 @@ function fromIndex(start, end, { keepEnd = true } = {}) {
   if (b < 0) throw new Error(`index.html: can't find "${start}" … "${end}"`);
   return indexHtml.slice(a, keepEnd ? b + end.length : b);
 }
-const TRACKING_HEAD = fromIndex('<!-- Google Tag Manager -->', '\n\n  <title>', { keepEnd: false });
+const TRACKING_HEAD = fromIndex('<!-- Google Tag Manager + Google tag (GA4) -->', '\n\n  <title>', { keepEnd: false });
 const POSTHOG       = fromIndex('<!-- PostHog Analytics -->', '</script>');
 const GTM_NOSCRIPT  = fromIndex('<!-- Google Tag Manager (noscript) -->', '<!-- End Google Tag Manager (noscript) -->');
 
@@ -493,8 +493,8 @@ function projectPage(p, next) {
   <meta property="og:site_name" content="Assem Danakhmet — Дизайн интерьеров">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
-  <link rel="apple-touch-icon" href="/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
   <link rel="preload" as="image"${p.cover.modern ? ` type="image/${p.cover.modern}"` : ''} href="/projects/${p.slug}/${p.cover.id}.${p.cover.modern || 'jpg'}" fetchpriority="high">
   <link rel="preconnect" href="https://fonts.googleapis.com">

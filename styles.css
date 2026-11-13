@@ -1089,6 +1089,7 @@ footer {
 
   /* Designer photo fragments — mobile */
   .about-photo-wrap { padding-bottom: 56px; }
+  .photo-frag { background-image: image-set(url('assem-photo-960.avif') type('image/avif'), url('assem-photo-960.jpg') type('image/jpeg')); }
   .photo-nameplate { right: 0; bottom: 6px; padding: 11px 18px 13px; }
   .photo-nameplate-name { font-size: 28px; letter-spacing: -1px; }
   .photo-nameplate-desc { font-size: 10px; margin-top: 4px; }
