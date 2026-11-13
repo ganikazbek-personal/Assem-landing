@@ -35,7 +35,9 @@
       e.target.loading = 'eager';
       ahead.unobserve(e.target);
     }), { rootMargin: '1600px 0px' });
-    imgs.forEach((img) => ahead.observe(img));
+    // only after the cover has arrived, so these don't hold it back
+    const start = () => imgs.forEach((img) => ahead.observe(img));
+    document.readyState === 'complete' ? start() : addEventListener('load', start, { once: true });
   }
 
   /* LIGHTBOX */

@@ -94,8 +94,9 @@ function pic(slug, ph, { alt, cls = '', eager = false, sizes = null, cap = false
   return [
     `<picture${cls ? ` class="${cls}"` : ''}>`,
     ph.modern && `  <source ${set} type="image/${ph.modern}">`,
-    // lazy photos show a blurry inline preview until they arrive
-    `  <img src="${src}.jpg" alt="${esc(alt)}" width="${ph.w}" height="${ph.h}"${eager ? ' fetchpriority="high"' : ' loading="lazy"'} decoding="async"${!eager && ph.lqip ? ` style="background: url(${ph.lqip}) 50% / cover no-repeat"` : ''}>`,
+    // a blurry inline preview shows until the photo arrives — the cover too, so a phone
+    // on a slow connection sees the room at once instead of a dark screen
+    `  <img src="${src}.jpg" alt="${esc(alt)}" width="${ph.w}" height="${ph.h}"${eager ? ' fetchpriority="high"' : ' loading="lazy"'} decoding="async"${ph.lqip ? ` style="background: url(${ph.lqip}) 50% / cover no-repeat"` : ''}>`,
     '</picture>',
   ].filter(Boolean).map((line) => pad + line).join('\n');
 }

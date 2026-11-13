@@ -36,8 +36,11 @@
   // Photos load ahead of the viewer: the next few slides at once, the rest once the
   // stories have been on screen for a moment
   const imgsOf = (s) => [...s.querySelectorAll('img')];
-  const warm = (from, count = slides.length) => slides.slice(from, from + count)
+  // Nothing is fetched ahead until the page (and its cover photo) has loaded
+  const ready = () => document.readyState === 'complete';
+  const warm = (from, count = slides.length) => ready() && slides.slice(from, from + count)
     .forEach((s) => imgsOf(s).forEach((img) => { if (img.loading === 'lazy') img.loading = 'eager'; }));
+  addEventListener('load', () => warm(i, 4), { once: true });
   let warmedAll = false;
 
   function fit() {
